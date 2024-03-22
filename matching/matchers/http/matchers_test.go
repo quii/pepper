@@ -1,4 +1,4 @@
-package httptest
+package http
 
 import (
 	"encoding/json"
@@ -20,7 +20,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 			res.Body.WriteString("Hello, world")
 
 			// see how we can compose matchers together!
-			Expect(spyTB, MatchableRes(*res)).To(HaveBody(EqualTo("Hello, world")))
+			Expect(spyTB, res.Result()).To(HaveBody(EqualTo("Hello, world")))
 			Expect(t, spyTB).To(HaveNoErrors)
 		})
 
@@ -30,8 +30,8 @@ func TestHTTPTestMatchers(t *testing.T) {
 
 			res.Body.WriteString("Hello, world")
 
-			Expect(spyTB, MatchableRes(*res)).To(HaveBody(EqualTo("Goodbye, world")))
-			Expect(t, spyTB).To(HaveError("expected the response to be equal to Goodbye, world, but it was Hello, world"))
+			Expect(spyTB, res.Result()).To(HaveBody(EqualTo("Goodbye, world")))
+			Expect(t, spyTB).To(HaveError("expected the response body to be equal to Goodbye, world, but it was Hello, world"))
 		})
 
 		t.Run("example of matching JSON", func(t *testing.T) {
@@ -66,7 +66,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				spyTB := &SpyTB{}
 
 				res.Body.WriteString(`{"name": "Finish the side project", "completed": true}`)
-				Expect(spyTB, MatchableRes(*res)).To(HaveBody(WithCompletedTODO))
+				Expect(spyTB, res.Result()).To(HaveBody(WithCompletedTODO))
 				Expect(t, spyTB).To(HaveNoErrors)
 			})
 
@@ -75,8 +75,8 @@ func TestHTTPTestMatchers(t *testing.T) {
 				spyTB := &SpyTB{}
 
 				res.Body.WriteString(`{"name": "Finish the side project", "completed": false}`)
-				Expect(spyTB, MatchableRes(*res)).To(HaveBody(WithCompletedTODO))
-				Expect(t, spyTB).To(HaveError("expected the response to have a completed todo, but it wasn't"))
+				Expect(spyTB, res.Result()).To(HaveBody(WithCompletedTODO))
+				Expect(t, spyTB).To(HaveError("expected the response body to have a completed todo, but it wasn't"))
 			})
 
 			t.Run("with a todo name", func(t *testing.T) {
@@ -84,7 +84,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				spyTB := &SpyTB{}
 
 				res.Body.WriteString(`{"name": "Finish the side project", "completed": false}`)
-				Expect(spyTB, MatchableRes(*res)).To(HaveBody(WithTodoNameOf("Finish the side project")))
+				Expect(spyTB, res.Result()).To(HaveBody(WithTodoNameOf("Finish the side project")))
 				Expect(t, spyTB).To(HaveNoErrors)
 			})
 
@@ -93,8 +93,8 @@ func TestHTTPTestMatchers(t *testing.T) {
 				spyTB := &SpyTB{}
 
 				res.Body.WriteString(`{"name": "Egg", "completed": false}`)
-				Expect(spyTB, MatchableRes(*res)).To(HaveBody(WithTodoNameOf("Bacon")))
-				Expect(t, spyTB).To(HaveError(`expected the response to have a todo name of "Bacon", but it was "Egg"`))
+				Expect(spyTB, res.Result()).To(HaveBody(WithTodoNameOf("Bacon")))
+				Expect(t, spyTB).To(HaveError(`expected the response body to have a todo name of "Bacon", but it was "Egg"`))
 			})
 
 			t.Run("compose the matchers", func(t *testing.T) {
@@ -103,7 +103,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 
 				res.Body.WriteString(`{"name": "Egg", "completed": false}`)
 
-				Expect(spyTB, MatchableRes(*res)).To(
+				Expect(spyTB, res.Result()).To(
 					HaveBody(WithTodoNameOf("Egg"), Not(WithCompletedTODO)),
 				)
 				Expect(t, spyTB).To(HaveNoErrors)
@@ -115,10 +115,11 @@ func TestHTTPTestMatchers(t *testing.T) {
 
 				res.Body.WriteString(`{"name": "Egg", "completed": true}`)
 
-				Expect(spyTB, MatchableRes(*res)).To(
+				Expect(spyTB, res.Result()).To(
+					BeOK,
 					HaveBody(WithTodoNameOf("Egg"), Not(WithCompletedTODO)),
 				)
-				Expect(t, spyTB).To(HaveError(`expected the response to not have a completed todo`))
+				Expect(t, spyTB).To(HaveError(`expected the response body to not have a completed todo`))
 			})
 		})
 	})
@@ -129,7 +130,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				res := httptest.NewRecorder()
 				spyTB := &SpyTB{}
 				res.WriteHeader(http.StatusOK)
-				Expect(spyTB, MatchableRes(*res)).To(BeOK)
+				Expect(spyTB, res.Result()).To(BeOK)
 				Expect(t, spyTB).To(HaveNoErrors)
 			})
 
@@ -137,7 +138,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				res := httptest.NewRecorder()
 				spyTB := &SpyTB{}
 				res.WriteHeader(http.StatusTeapot)
-				Expect(spyTB, MatchableRes(*res)).To(Not(BeOK))
+				Expect(spyTB, res.Result()).To(Not(BeOK))
 				Expect(t, spyTB).To(HaveNoErrors)
 			})
 
@@ -145,7 +146,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				res := httptest.NewRecorder()
 				spyTB := &SpyTB{}
 				res.WriteHeader(http.StatusNotFound)
-				Expect(spyTB, MatchableRes(*res)).To(BeOK)
+				Expect(spyTB, res.Result()).To(BeOK)
 				Expect(t, spyTB).To(HaveError(`expected the response to have status of 200, but it was 404`))
 			})
 		})
@@ -155,7 +156,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 			spyTB := &SpyTB{}
 
 			res.WriteHeader(http.StatusTeapot)
-			Expect(spyTB, MatchableRes(*res)).To(HaveStatus(http.StatusTeapot))
+			Expect(spyTB, res.Result()).To(HaveStatus(http.StatusTeapot))
 			Expect(t, spyTB).To(HaveNoErrors)
 		})
 	})

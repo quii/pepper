@@ -1,5 +1,7 @@
 package matching
 
+import "fmt"
+
 type (
 	TB interface {
 		Error(args ...any)
@@ -10,6 +12,7 @@ type (
 		Description string
 		Matches     bool
 		But         string
+		SubjectName string
 	}
 
 	Expecter[T any] struct {
@@ -28,11 +31,14 @@ func (e Expecter[T]) To(matchers ...Matcher[T]) {
 	e.t.Helper()
 	for _, matcher := range matchers {
 		result := matcher(e.Subject)
+		if result.SubjectName == "" {
+			result.SubjectName = fmt.Sprintf("%v", e.Subject)
+		}
 		if !result.Matches {
 			if result.But != "" {
-				e.t.Errorf("expected %v to %v, but %s", e.Subject, result.Description, result.But)
+				e.t.Errorf("expected %v to %v, but %s", result.SubjectName, result.Description, result.But)
 			} else {
-				e.t.Errorf("expected %v to %v", e.Subject, result.Description)
+				e.t.Errorf("expected %v to %v", result.SubjectName, result.Description)
 			}
 		}
 	}
