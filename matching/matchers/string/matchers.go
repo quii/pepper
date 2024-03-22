@@ -29,7 +29,7 @@ func EqualTo[T comparable](in T) matching.Matcher[T] {
 		return matching.MatchResult{
 			Description: fmt.Sprintf("be equal to %v", in),
 			Matches:     got == in,
-			But:         fmt.Sprintf("it was %s", got),
+			But:         fmt.Sprintf("it was %v", got),
 		}
 	}
 }
