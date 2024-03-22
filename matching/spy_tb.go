@@ -6,6 +6,10 @@ type SpyTB struct {
 	ErrorCalls []string
 }
 
+func (s *SpyTB) String() string {
+	return "Spy TB"
+}
+
 func (s *SpyTB) Helper() {
 }
 
