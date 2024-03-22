@@ -9,6 +9,7 @@ type (
 	MatchResult struct {
 		Description string
 		Matches     bool
+		But         string
 	}
 
 	Expect[T any] struct {
@@ -28,12 +29,26 @@ func (e Expect[T]) To(matchers ...Matcher[T]) {
 	for _, matcher := range matchers {
 		result := matcher(e.Subject)
 		if !result.Matches {
-			e.t.Errorf("expected %v to %v", e.Subject, result.Description)
+			if result.But != "" {
+				e.t.Errorf("expected %v to %v, but %s", e.Subject, result.Description, result.But)
+			} else {
+				e.t.Errorf("expected %v to %v", e.Subject, result.Description)
+			}
 		}
 	}
 }
 
 func Doesnt[T any](matcher Matcher[T]) Matcher[T] {
+	return func(got T) MatchResult {
+		result := matcher(got)
+		return MatchResult{
+			Description: "not " + result.Description,
+			Matches:     !result.Matches,
+		}
+	}
+}
+
+func Not[T any](matcher Matcher[T]) Matcher[T] {
 	return func(got T) MatchResult {
 		result := matcher(got)
 		return MatchResult{
