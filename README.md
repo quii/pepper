@@ -21,4 +21,4 @@ Matchers allow you to write _domain specific_ matching code, focused on the _spe
 
 ### TODO: Worked example
 
-- Include "zeroing time" as an example
+- Include "zeroing time" as an example. Do it with a TODO api that returns some JSON with a timestamp in it, show how we can compose matchers that just check what we need. 
