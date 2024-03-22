@@ -12,7 +12,7 @@ type (
 		But         string
 	}
 
-	Expect[T any] struct {
+	Expecter[T any] struct {
 		t       TB
 		Subject T
 	}
@@ -20,11 +20,11 @@ type (
 	Matcher[T any] func(T) MatchResult
 )
 
-func ExpectThat[T any](t TB, subject T) Expect[T] {
-	return Expect[T]{t, subject}
+func Expect[T any](t TB, subject T) Expecter[T] {
+	return Expecter[T]{t, subject}
 }
 
-func (e Expect[T]) To(matchers ...Matcher[T]) {
+func (e Expecter[T]) To(matchers ...Matcher[T]) {
 	e.t.Helper()
 	for _, matcher := range matchers {
 		result := matcher(e.Subject)

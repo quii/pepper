@@ -8,7 +8,7 @@ import (
 
 func TestStringMatchers(t *testing.T) {
 	t.Run("passing example", func(t *testing.T) {
-		ExpectThat(t, "hello").To(
+		Expect(t, "hello").To(
 			HaveLength(5),
 			EqualTo("hello"),
 			Contain("ell"),
