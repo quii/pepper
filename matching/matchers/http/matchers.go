@@ -22,13 +22,19 @@ func BeOK(res *http.Response) matching.MatchResult {
 	return HaveStatus(http.StatusOK)(res)
 }
 
-func HaveJSONHeader(res *http.Response) matching.MatchResult {
-	return matching.MatchResult{
-		Description: "have content-type header of application/json",
-		Matches:     res.Header.Get("Content-Type") == "application/json",
-		But:         fmt.Sprintf("it was %q", res.Header.Get("Content-Type")),
-		SubjectName: "the response",
+func HaveHeader(header, value string) matching.Matcher[*http.Response] {
+	return func(res *http.Response) matching.MatchResult {
+		return matching.MatchResult{
+			Description: fmt.Sprintf("have header %q of %q", header, value),
+			Matches:     res.Header.Get(header) == value,
+			But:         fmt.Sprintf("it was %q", res.Header.Get(header)),
+			SubjectName: "the response",
+		}
 	}
+}
+
+func HaveJSONHeader(res *http.Response) matching.MatchResult {
+	return HaveHeader("content-type", "application/json")(res)
 }
 
 func HaveBody(bodyMatchers ...matching.Matcher[string]) matching.Matcher[*http.Response] {

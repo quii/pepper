@@ -123,7 +123,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 					HaveBody(WithTodoNameOf("Egg"), Not(WithCompletedTODO)),
 				)
 				Expect(t, spyTB).To(HaveError(`expected the response body to not have a completed todo`))
-				Expect(t, spyTB).To(HaveError(`expected the response to have content-type header of application/json, but it was ""`))
+				Expect(t, spyTB).To(HaveError(`expected the response to have header "content-type" of "application/json", but it was ""`))
 			})
 		})
 	})
@@ -162,6 +162,36 @@ func TestHTTPTestMatchers(t *testing.T) {
 			res.WriteHeader(http.StatusTeapot)
 			Expect(spyTB, res.Result()).To(HaveStatus(http.StatusTeapot))
 			Expect(t, spyTB).To(HaveNoErrors)
+		})
+	})
+
+	t.Run("Header matchers", func(t *testing.T) {
+		t.Run("happy path multiple headers", func(t *testing.T) {
+			res := httptest.NewRecorder()
+			spyTB := &SpyTB{}
+			res.Header().Add("Content-Encoding", "gzip")
+			res.Header().Add("Content-Type", "text/html")
+
+			Expect(spyTB, res.Result()).To(
+				HaveHeader("Content-Encoding", "gzip"),
+				HaveHeader("Content-Type", "text/html"),
+			)
+			Expect(t, spyTB).To(HaveNoErrors)
+		})
+
+		t.Run("unhappy path with multiple headers", func(t *testing.T) {
+			res := httptest.NewRecorder()
+			spyTB := &SpyTB{}
+			res.Header().Add("Content-Type", "text/xml")
+
+			Expect(spyTB, res.Result()).To(
+				HaveHeader("Content-Encoding", "gzip"),
+				HaveHeader("Content-Type", "text/html"),
+			)
+			Expect(t, spyTB).To(
+				HaveError(`expected the response to have header "Content-Encoding" of "gzip", but it was ""`),
+				HaveError(`expected the response to have header "Content-Type" of "text/html", but it was "text/xml"`),
+			)
 		})
 	})
 }
