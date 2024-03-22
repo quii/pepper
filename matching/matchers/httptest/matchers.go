@@ -26,3 +26,9 @@ func HaveStatus(status int) matching.Matcher[StringedRes] {
 func BeOK(res StringedRes) matching.MatchResult {
 	return HaveStatus(http.StatusOK)(res)
 }
+
+func HaveBody(bodyMatchers matching.Matcher[string]) matching.Matcher[StringedRes] {
+	return func(res StringedRes) matching.MatchResult {
+		return bodyMatchers(res.Body.String())
+	}
+}
