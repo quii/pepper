@@ -24,7 +24,7 @@ func BeOK(res *http.Response) matching.MatchResult {
 
 func HaveJSONHeader(res *http.Response) matching.MatchResult {
 	return matching.MatchResult{
-		Description: "have JSON header",
+		Description: "have content-type header of application/json",
 		Matches:     res.Header.Get("Content-Type") == "application/json",
 		But:         fmt.Sprintf("it was %q", res.Header.Get("Content-Type")),
 		SubjectName: "the response",
