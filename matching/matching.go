@@ -32,3 +32,13 @@ func (e Expect[T]) To(matchers ...Matcher[T]) {
 		}
 	}
 }
+
+func Doesnt[T any](matcher Matcher[T]) Matcher[T] {
+	return func(got T) MatchResult {
+		result := matcher(got)
+		return MatchResult{
+			Description: "not " + result.Description,
+			Matches:     !result.Matches,
+		}
+	}
+}
