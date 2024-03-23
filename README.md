@@ -117,6 +117,8 @@ Here is the failing output
     matchers_test.go:100: expected the response body to have a todo name of "Egg", but it was "Bacon"
 ```
 
+Embracing this approach with well-written matchers means you get readable test failures for free. 
+
 ## Benefits of matchers
 
 A lot of the time people zero-in on the "fluency" of matchers. Whilst it's true that the ease of use does make using matchers attractive, I think there's a larger, perhaps less obvious benefit. 
