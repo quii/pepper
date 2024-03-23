@@ -45,16 +45,14 @@ func (e Expecter[T]) To(matchers ...Matcher[T]) {
 }
 
 func Doesnt[T any](matcher Matcher[T]) Matcher[T] {
-	return func(got T) MatchResult {
-		result := matcher(got)
-		return MatchResult{
-			Description: "not " + result.Description,
-			Matches:     !result.Matches,
-		}
-	}
+	return negate(matcher)
 }
 
 func Not[T any](matcher Matcher[T]) Matcher[T] {
+	return negate(matcher)
+}
+
+func negate[T any](matcher Matcher[T]) Matcher[T] {
 	return func(got T) MatchResult {
 		result := matcher(got)
 		return MatchResult{
