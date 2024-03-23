@@ -78,7 +78,6 @@ func TestHTTPTestMatchers(t *testing.T) {
 
 			t.Run("with a todo name", func(t *testing.T) {
 				res := httptest.NewRecorder()
-
 				res.Body.WriteString(`{"name": "Finish the side project", "completed": false}`)
 				Expect(t, res.Result()).To(HaveBody(WithTodoNameOf("Finish the side project")))
 			})
@@ -99,6 +98,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				res.Header().Add("content-type", "application/json")
 
 				Expect(t, res.Result()).To(
+					BeOK,
 					HaveJSONHeader,
 					HaveBody(WithTodoNameOf("Egg"), Not(WithCompletedTODO)),
 				)
