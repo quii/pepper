@@ -1,11 +1,12 @@
-package http
+package http_test
 
 import (
 	"encoding/json"
 	"fmt"
 	. "github.com/quii/pepper/matching"
+	. "github.com/quii/pepper/matching/matchers/comparable"
+	. "github.com/quii/pepper/matching/matchers/http"
 	. "github.com/quii/pepper/matching/matchers/spytb"
-	. "github.com/quii/pepper/matching/matchers/string"
 	"net/http"
 	"net/http/httptest"
 	"testing"

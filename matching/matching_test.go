@@ -2,6 +2,7 @@ package matching_test
 
 import (
 	. "github.com/quii/pepper/matching"
+	. "github.com/quii/pepper/matching/matchers/comparable"
 	. "github.com/quii/pepper/matching/matchers/string"
 	"testing"
 )
