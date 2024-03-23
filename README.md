@@ -98,7 +98,7 @@ This library should make it easy for you to write tests that give you a clear, c
 t.Run("failing test", func(t *testing.T) {
     res := httptest.NewRecorder()
 
-    res.Body.WriteString(`{"name": "Bacon", "completed": true}`)
+    res.Body.WriteString(`{"name": "Bacon", "completed": false}`)
     res.Header().Add("content-type", "application/xml")
 
     Expect(t, res.Result()).To(
