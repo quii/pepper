@@ -15,13 +15,11 @@ func TestHTTPTestMatchers(t *testing.T) {
 	t.Run("Body matching", func(t *testing.T) {
 		t.Run("simple string match", func(t *testing.T) {
 			res := httptest.NewRecorder()
-			spyTB := &SpyTB{}
 
 			res.Body.WriteString("Hello, world")
 
 			// see how we can compose matchers together!
-			Expect(spyTB, res.Result()).To(HaveBody(EqualTo("Hello, world")))
-			Expect(t, spyTB).To(HaveNoErrors)
+			Expect(t, res.Result()).To(HaveBody(EqualTo("Hello, world")))
 		})
 
 		t.Run("simple string mismatch", func(t *testing.T) {
@@ -63,11 +61,8 @@ func TestHTTPTestMatchers(t *testing.T) {
 
 			t.Run("with completed todo", func(t *testing.T) {
 				res := httptest.NewRecorder()
-				spyTB := &SpyTB{}
-
 				res.Body.WriteString(`{"name": "Finish the side project", "completed": true}`)
-				Expect(spyTB, res.Result()).To(HaveBody(WithCompletedTODO))
-				Expect(t, spyTB).To(HaveNoErrors)
+				Expect(t, res.Result()).To(HaveBody(WithCompletedTODO))
 			})
 
 			t.Run("with incomplete todo", func(t *testing.T) {
@@ -81,11 +76,9 @@ func TestHTTPTestMatchers(t *testing.T) {
 
 			t.Run("with a todo name", func(t *testing.T) {
 				res := httptest.NewRecorder()
-				spyTB := &SpyTB{}
 
 				res.Body.WriteString(`{"name": "Finish the side project", "completed": false}`)
-				Expect(spyTB, res.Result()).To(HaveBody(WithTodoNameOf("Finish the side project")))
-				Expect(t, spyTB).To(HaveNoErrors)
+				Expect(t, res.Result()).To(HaveBody(WithTodoNameOf("Finish the side project")))
 			})
 
 			t.Run("with incorrect todo name", func(t *testing.T) {
@@ -99,16 +92,14 @@ func TestHTTPTestMatchers(t *testing.T) {
 
 			t.Run("compose the matchers", func(t *testing.T) {
 				res := httptest.NewRecorder()
-				spyTB := &SpyTB{}
 
 				res.Body.WriteString(`{"name": "Egg", "completed": false}`)
 				res.Header().Add("content-type", "application/json")
 
-				Expect(spyTB, res.Result()).To(
+				Expect(t, res.Result()).To(
 					HaveJSONHeader,
 					HaveBody(WithTodoNameOf("Egg"), Not(WithCompletedTODO)),
 				)
-				Expect(t, spyTB).To(HaveNoErrors)
 			})
 
 			t.Run("compose the matchers to show an unexpected response", func(t *testing.T) {
@@ -132,18 +123,14 @@ func TestHTTPTestMatchers(t *testing.T) {
 		t.Run("OK", func(t *testing.T) {
 			t.Run("positive happy path", func(t *testing.T) {
 				res := httptest.NewRecorder()
-				spyTB := &SpyTB{}
 				res.WriteHeader(http.StatusOK)
-				Expect(spyTB, res.Result()).To(BeOK)
-				Expect(t, spyTB).To(HaveNoErrors)
+				Expect(t, res.Result()).To(BeOK)
 			})
 
 			t.Run("negation on happy path", func(t *testing.T) {
 				res := httptest.NewRecorder()
-				spyTB := &SpyTB{}
 				res.WriteHeader(http.StatusTeapot)
-				Expect(spyTB, res.Result()).To(Not(BeOK))
-				Expect(t, spyTB).To(HaveNoErrors)
+				Expect(t, res.Result()).To(Not(BeOK))
 			})
 
 			t.Run("failure message", func(t *testing.T) {
@@ -157,26 +144,21 @@ func TestHTTPTestMatchers(t *testing.T) {
 
 		t.Run("user defined status", func(t *testing.T) {
 			res := httptest.NewRecorder()
-			spyTB := &SpyTB{}
-
 			res.WriteHeader(http.StatusTeapot)
-			Expect(spyTB, res.Result()).To(HaveStatus(http.StatusTeapot))
-			Expect(t, spyTB).To(HaveNoErrors)
+			Expect(t, res.Result()).To(HaveStatus(http.StatusTeapot))
 		})
 	})
 
 	t.Run("Header matchers", func(t *testing.T) {
 		t.Run("happy path multiple headers", func(t *testing.T) {
 			res := httptest.NewRecorder()
-			spyTB := &SpyTB{}
 			res.Header().Add("Content-Encoding", "gzip")
 			res.Header().Add("Content-Type", "text/html")
 
-			Expect(spyTB, res.Result()).To(
+			Expect(t, res.Result()).To(
 				HaveHeader("Content-Encoding", "gzip"),
 				HaveHeader("Content-Type", "text/html"),
 			)
-			Expect(t, spyTB).To(HaveNoErrors)
 		})
 
 		t.Run("unhappy path with multiple headers", func(t *testing.T) {

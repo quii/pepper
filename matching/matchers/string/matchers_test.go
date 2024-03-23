@@ -9,9 +9,7 @@ import (
 func TestStringMatchers(t *testing.T) {
 	t.Run("Have length", func(t *testing.T) {
 		t.Run("passing", func(t *testing.T) {
-			spyTB := &SpyTB{}
-			Expect(spyTB, "hello").To(HaveLength(5))
-			Expect(t, spyTB).To(HaveNoErrors)
+			Expect(t, "hello").To(HaveLength(5))
 		})
 
 		t.Run("failing", func(t *testing.T) {
