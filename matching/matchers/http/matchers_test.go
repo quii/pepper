@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestHTTPTestMatchers(t *testing.T) {
@@ -34,8 +35,9 @@ func TestHTTPTestMatchers(t *testing.T) {
 
 		t.Run("example of matching JSON", func(t *testing.T) {
 			type Todo struct {
-				Name      string `json:"name"`
-				Completed bool   `json:"completed"`
+				Name        string    `json:"name"`
+				Completed   bool      `json:"completed"`
+				LastUpdated time.Time `json:"last_updated"`
 			}
 
 			WithCompletedTODO := func(body string) MatchResult {
