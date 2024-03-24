@@ -36,9 +36,9 @@ func (e Expecter[T]) To(matchers ...Matcher[T]) {
 		}
 		if !result.Matches {
 			if result.But != "" {
-				e.t.Errorf("expected %v to %v, but %s", result.SubjectName, result.Description, result.But)
+				e.t.Errorf("expected %+v to %+v, but %s", result.SubjectName, result.Description, result.But)
 			} else {
-				e.t.Errorf("expected %v to %v", result.SubjectName, result.Description)
+				e.t.Errorf("expected %+v to %+v", result.SubjectName, result.Description)
 			}
 		}
 	}
@@ -59,5 +59,28 @@ func negate[T any](matcher Matcher[T]) Matcher[T] {
 			Description: "not " + result.Description,
 			Matches:     !result.Matches,
 		}
+	}
+}
+
+func (m MatchResult) Combine(other MatchResult) MatchResult {
+	but := m.But + " and " + other.But
+
+	if m.Matches && other.Matches {
+		but = ""
+	}
+
+	if m.Matches && !other.Matches {
+		but = other.But
+	}
+
+	if !m.Matches && other.Matches {
+		but = m.But
+	}
+
+	return MatchResult{
+		Description: m.Description + " and " + other.Description,
+		Matches:     m.Matches && other.Matches,
+		But:         but,
+		SubjectName: m.SubjectName,
 	}
 }

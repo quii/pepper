@@ -47,7 +47,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				return MatchResult{
 					Description: "have a completed todo",
 					Matches:     todo.Completed,
-					But:         "it wasn't",
+					But:         "it wasn't complete",
 				}
 			}
 			WithTodoNameOf := func(todoName string) Matcher[string] {
@@ -74,7 +74,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 
 				res.Body.WriteString(`{"name": "Finish the side project", "completed": false}`)
 				Expect(spyTB, res.Result()).To(HaveBody(WithCompletedTODO))
-				Expect(t, spyTB).To(HaveError("expected the response body to have a completed todo, but it wasn't"))
+				Expect(t, spyTB).To(HaveError("expected the response body to have a completed todo, but it wasn't complete"))
 			})
 
 			t.Run("with a todo name", func(t *testing.T) {
@@ -83,13 +83,26 @@ func TestHTTPTestMatchers(t *testing.T) {
 				Expect(t, res.Result()).To(HaveBody(WithTodoNameOf("Finish the side project")))
 			})
 
+			t.Run("with incorrect todo name and not completed", func(t *testing.T) {
+				res := httptest.NewRecorder()
+				spyTB := &SpyTB{}
+
+				res.Body.WriteString(`{"name": "Egg", "completed": false}`)
+				Expect(spyTB, res.Result()).To(HaveBody(WithTodoNameOf("Bacon"), WithCompletedTODO))
+				Expect(t, spyTB).To(
+					HaveError(`expected the response body to have a todo name of "Bacon" and have a completed todo, but it was "Egg" and it wasn't complete`),
+				)
+			})
+
 			t.Run("with incorrect todo name", func(t *testing.T) {
 				res := httptest.NewRecorder()
 				spyTB := &SpyTB{}
 
 				res.Body.WriteString(`{"name": "Egg", "completed": false}`)
 				Expect(spyTB, res.Result()).To(HaveBody(WithTodoNameOf("Bacon")))
-				Expect(t, spyTB).To(HaveError(`expected the response body to have a todo name of "Bacon", but it was "Egg"`))
+				Expect(t, spyTB).To(
+					HaveError(`expected the response body to have a todo name of "Bacon", but it was "Egg"`),
+				)
 			})
 
 			t.Run("compose the matchers", func(t *testing.T) {

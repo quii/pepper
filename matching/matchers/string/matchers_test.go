@@ -15,7 +15,7 @@ func TestStringMatchers(t *testing.T) {
 		t.Run("failing", func(t *testing.T) {
 			spyTB := &SpyTB{}
 			Expect(spyTB, "goodbye").To(HaveLength(5))
-			Expect(t, spyTB).To(HaveError("expected goodbye to have length of 5, got 7"))
+			Expect(t, spyTB).To(HaveError("expected goodbye to have length of 5, but it has a length of 7"))
 		})
 	})
 }

@@ -40,18 +40,30 @@ func HaveJSONHeader(res *http.Response) matching.MatchResult {
 func HaveBody(bodyMatchers ...matching.Matcher[string]) matching.Matcher[*http.Response] {
 	return func(res *http.Response) matching.MatchResult {
 		body, _ := io.ReadAll(res.Body)
+		var combinedMatchResults *matching.MatchResult = nil
+
 		for _, matcher := range bodyMatchers {
 			result := matcher(string(body))
 			result.SubjectName = "the response body"
 			if !result.Matches {
-				return result
+				if combinedMatchResults == nil {
+					combinedMatchResults = &result
+				} else {
+					//todo: there's gonna be a nicer way than this, but make it work, make it right...
+					foo := combinedMatchResults.Combine(result)
+					combinedMatchResults = &foo
+				}
 			}
 		}
 
-		return matching.MatchResult{
-			Description: "have body matching",
-			Matches:     true,
-			SubjectName: "the response body",
+		if combinedMatchResults == nil {
+			return matching.MatchResult{
+				Description: "have body matching",
+				Matches:     true,
+				SubjectName: "the response body",
+			}
 		}
+
+		return *combinedMatchResults
 	}
 }
