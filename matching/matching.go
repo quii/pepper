@@ -62,7 +62,15 @@ func negate[T any](matcher Matcher[T]) Matcher[T] {
 	}
 }
 
+func (m MatchResult) Zero() bool {
+	return m.Description == "" && m.But == "" && !m.Matches
+}
+
 func (m MatchResult) Combine(other MatchResult) MatchResult {
+	if m.Zero() {
+		return other
+	}
+
 	but := m.But + " and " + other.But
 
 	if m.Matches && other.Matches {
@@ -82,5 +90,30 @@ func (m MatchResult) Combine(other MatchResult) MatchResult {
 		Matches:     m.Matches && other.Matches,
 		But:         but,
 		SubjectName: m.SubjectName,
+	}
+}
+
+func Compose[A, B any](getSubject func(A) B, subjectName string, matchers ...Matcher[B]) Matcher[A] {
+	return func(parentSubject A) MatchResult {
+		childSubject := getSubject(parentSubject)
+
+		var combinedMatchResults = MatchResult{
+			SubjectName: subjectName,
+		}
+
+		hasMatched := true
+
+		for _, matcher := range matchers {
+			result := matcher(childSubject)
+			result.SubjectName = subjectName
+			if !result.Matches {
+				hasMatched = false
+				combinedMatchResults = combinedMatchResults.Combine(result)
+			}
+		}
+
+		combinedMatchResults.Matches = hasMatched
+
+		return combinedMatchResults
 	}
 }
