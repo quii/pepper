@@ -5,6 +5,7 @@ import "github.com/quii/pepper/matching"
 func ContainItem(m matching.Matcher[string]) matching.Matcher[[]string] {
 	return func(items []string) matching.MatchResult {
 		var exampleFailure matching.MatchResult
+
 		for _, item := range items {
 			result := m(item)
 			if result.Matches {

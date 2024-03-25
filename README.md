@@ -6,13 +6,51 @@ Very much playing around, work in progress.
 
 Like [gocrest](https://github.com/corbym/gocrest) but less mature and battle-tested. I'm making this purely to scratch an itch, but I do hope it is useful for some. The main purpose of writing this is for material for a chapter of [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests)
 
+## Examples
+
+Simple examples
+
+```go
+Expect(t, []string{"hello", "WORLD"}).To(ContainItem(HaveAllCaps))
+
+Expect(spyTB, []string{"hello", "world"}).To(ContainItem(EqualTo("goodbye")))
+
+Expect(t, "hello").To(HaveLength(5))
+```
+
+HTTP response examples
+
+```go
+t.Run("simple string match", func(t *testing.T) {
+    res := httptest.NewRecorder()
+
+    res.Body.WriteString("Hello, world")
+
+    // see how we can compose and re-use matchers
+    Expect(t, res.Result()).To(HaveBody(EqualTo("Hello, world")))
+})
+
+t.Run("compose http matchers", func(t *testing.T) {
+    res := httptest.NewRecorder()
+
+    res.Body.WriteString(`{"name": "Egg", "completed": false}`)
+    res.Header().Add("content-type", "application/json")
+
+    Expect(t, res.Result()).To(
+        BeOK,
+        HaveJSONHeader,
+        HaveBody(WithTodoNameOf("Egg"), Not(WithCompletedTODO)),
+    )
+})
+```
+
 ## Trade-offs and optimisations
 
 ### Type-safety
 
 Now Go has generics, we now have a more expressive language which lets us make matchers that are type-safe, rather than relying on reflection. The problem with reflection is it can lead to lazy test writing, especially when you're dealing with complex types. It can lead developers into lazily asserting on complex types, which makes the tests harder to follow and more brittle. See the [curse of asserting on irrelevant detail](#the-curse-of-asserting-on-irrelevant-detail) for more on this.
 
-The trade-off we're making here though is you will have to make your own matchers for your own types at times. This is a good thing, as it forces you to think about what you're actually testing, and it makes your tests more readable and less brittle. There will be plenty of examples to show how, and you can read the existing standard library of matchers to see how it's done.
+The trade-off we're making here though is you will have to make your own matchers for your own types at times. This is a good thing, as it forces you to think about what you're actually testing, and it makes your tests more readable and less brittle. There will be plenty of examples to show how, and you can read the existing standard library of matchers to see how it's done. Due to the compositional nature of the library though, you _should_ be able to leverage existing matchers for re-use. 
 
 ### Composition
 
@@ -80,17 +118,19 @@ t.Run("example of matching JSON", func(t *testing.T) {
 })
 ```
 
+Note in the final example how we can compose built-in matchers like `BeOK`, `HaveJSONHeader` and `Not`, with the custom-built matchers to easily write very expressive tests that fail with very clear error messages.
+
 In practice, your matchers should live outside your test code. Someone could argue writing these matchers adds more code as if that's a bad thing, but I would argue that the tests read far better, and don't suffer the problems you can run in to if you lazily assert on complex types. 
 
 In my experience of using matchers, over time as you find yourself testing more and more permutations of behaviour, the effort behind the matchers pays off in terms of making tests easier to write, read and maintain. 
 
 ## Test failure readability
 
-One of the most frustrating areas of working in a codebase with automated tests is how often test failure quality is poor. I'm sure every developer would've ran into this scenario:
+One of the most frustrating areas of working in a codebase with automated tests is how often test failure quality is poor. I'm sure every developer has into this scenario:
 
 > `test_foo.go:123` - `true was not equal to false`
 
-Computer, I already know that true is not equal to false. What was not false? What was true? What was the context? This is another why following TDD's process of "inspecting the failing test message" is so important, but sadly often overlooked.
+Computer, I already know that true is not equal to false. What was not false? What was true? What was the context? This is another reason why following TDD's process of "inspecting the failing test message" is so important, but sadly often overlooked.
 
 This library should make it easy for you to write tests that give you a clear, concise message when they fail. Here's an example of a failing test:
 
