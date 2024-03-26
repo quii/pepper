@@ -21,6 +21,7 @@ func LessThan[T cmp.Ordered](in T) matching.Matcher[T] {
 		return matching.MatchResult{
 			Description: fmt.Sprintf("be less than %v", in),
 			Matches:     got < in,
+			But:         fmt.Sprintf("it was %v", got),
 		}
 	}
 }
@@ -30,6 +31,7 @@ func GreaterThan[T cmp.Ordered](in T) matching.Matcher[T] {
 		return matching.MatchResult{
 			Description: fmt.Sprintf("be greater than %v", in),
 			Matches:     got > in,
+			But:         fmt.Sprintf("it was %v", got),
 		}
 	}
 }
