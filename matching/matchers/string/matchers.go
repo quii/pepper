@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// todo: this should be a higher order matcher so you can do HaveLength(LessThan(2)) - which then fits neatly into re-using comparable matchers
 func HaveLength(length int) matching.Matcher[string] {
 	return func(in string) matching.MatchResult {
 		return matching.MatchResult{
