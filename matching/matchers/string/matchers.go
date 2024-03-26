@@ -25,7 +25,7 @@ func HaveAllCaps(in string) matching.MatchResult {
 	}
 }
 
-func Contain(substring string) matching.Matcher[string] {
+func HaveSubstring(substring string) matching.Matcher[string] {
 	return func(in string) matching.MatchResult {
 		return matching.MatchResult{
 			Description: fmt.Sprintf("contain %q", substring),

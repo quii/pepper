@@ -12,7 +12,7 @@ func TestStringMatchers(t *testing.T) {
 		Expect(t, "hello").To(
 			HaveLength(5),
 			EqualTo("hello"),
-			Contain("ell"),
+			HaveSubstring("ell"),
 			Doesnt(HaveAllCaps),
 		)
 	})
