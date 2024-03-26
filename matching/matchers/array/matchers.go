@@ -2,8 +2,8 @@ package array
 
 import "github.com/quii/pepper/matching"
 
-func ContainItem(m matching.Matcher[string]) matching.Matcher[[]string] {
-	return func(items []string) matching.MatchResult {
+func ContainItem[T any](m matching.Matcher[T]) matching.Matcher[[]T] {
+	return func(items []T) matching.MatchResult {
 		var exampleFailure matching.MatchResult
 
 		for _, item := range items {
@@ -23,4 +23,8 @@ func ContainItem(m matching.Matcher[string]) matching.Matcher[[]string] {
 
 		return exampleFailure
 	}
+}
+
+func EveryItem[T any](m matching.Matcher[T]) matching.Matcher[[]T] {
+	panic("not yet implemented")
 }

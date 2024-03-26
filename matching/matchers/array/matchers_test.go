@@ -1,12 +1,23 @@
 package array
 
 import (
+	"fmt"
 	. "github.com/quii/pepper/matching"
 	. "github.com/quii/pepper/matching/matchers/comparable"
 	. "github.com/quii/pepper/matching/matchers/spytb"
 	. "github.com/quii/pepper/matching/matchers/string"
 	"testing"
 )
+
+func ExampleContainItem() {
+	t := &SpyTB{}
+
+	anArray := []string{"hello", "world"}
+	Expect(t, anArray).To(ContainItem(HaveAllCaps))
+
+	fmt.Println(t.ErrorCalls[0])
+	//Output: expected [hello world] to contain item be in all caps, but it did not
+}
 
 func TestArrayMatchers(t *testing.T) {
 	t.Run("contain with other matcher to find matcher", func(t *testing.T) {

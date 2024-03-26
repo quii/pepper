@@ -176,6 +176,59 @@ Matchers allow you to write _domain specific_ matching code, focused on the _spe
 
 ## Writing your own matchers
 
+Writing your own matchers is a great way of building a re-usable, composable library for your domain code.
+
+### How to
+
+A matcher is a function that takes the _thing_ you're trying to match against, returning a result
+
+```go
+type Matcher[T any] func(T) MatchResult
+```
+
+Here is the definition of `MatchResult`
+
+```go
+type MatchResult struct {
+    Description string
+    Matches     bool
+    But         string
+    SubjectName string
+}
+```
+
+Here is how `HaveAllCaps` is defined
+
+```go
+func HaveAllCaps(in string) matching.MatchResult {
+	return matching.MatchResult{
+		Description: "be in all caps",
+		Matches:     strings.ToUpper(in) == in,
+		But:         "it was not in all caps",
+	}
+}
+```
+
+#### Higher-order matchers
+
+This is fine for simple matchers where you want to assert on a static property of `T`. Often though, you'll want to write matchers where you want to check a particular _property_. 
+
+For this, no magic is required, just create a higher-order function that _returns_ a `Matcher[T]`. 
+
+A simple example is with `EqualTo`
+
+```go
+func EqualTo[T comparable](in T) matching.Matcher[T] {
+	return func(got T) matching.MatchResult {
+		return matching.MatchResult{
+			Description: fmt.Sprintf("be equal to %v", in),
+			Matches:     got == in,
+			But:         fmt.Sprintf("it was %v", got),
+		}
+	}
+}
+```
+
 ### Test support
 
 It might be overkill to unit test matchers, but if you intend for them to be re-used a lot (like the library included in this package), it might be worth doing. I find it's a useful way to see in isolation the test output on failure. 
