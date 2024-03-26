@@ -178,7 +178,7 @@ Matchers allow you to write _domain specific_ matching code, focused on the _spe
 
 ### Test support
 
-It might be overkill to unit test matchers, but if you intend for them to be re-used a lot (like the library included in this package), it might be worth doing. 
+It might be overkill to unit test matchers, but if you intend for them to be re-used a lot (like the library included in this package), it might be worth doing. I find it's a useful way to see in isolation the test output on failure. 
 
 Thankfully, Pepper makes this easy
 
