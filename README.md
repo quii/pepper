@@ -1,10 +1,10 @@
 # Pepper
 
-Very much playing around, work in progress.
+[![Go Reference](https://pkg.go.dev/badge/github.com/quii/pepper.svg)](https://pkg.go.dev/github.com/quii/pepper)
 
-## Hamcrest-style, _type-safe_ test matchers for Go
+##  _Type-safe_, composable, re-usable test matchers for Go
 
-Like [gocrest](https://github.com/corbym/gocrest) but less mature and battle-tested. I'm making this purely to scratch an itch, but I do hope it is useful for some. The main purpose of writing this is for material for a chapter of [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests)
+Inspired by [Hamcrest](https://hamcrest.org)
 
 ## Examples
 
@@ -48,7 +48,7 @@ t.Run("compose http matchers", func(t *testing.T) {
 
 ### Type-safety
 
-Now Go has generics, we now have a more expressive language which lets us make matchers that are type-safe, rather than relying on reflection. The problem with reflection is it can lead to lazy test writing, especially when you're dealing with complex types. It can lead developers into lazily asserting on complex types, which makes the tests harder to follow and more brittle. See the [curse of asserting on irrelevant detail](#the-curse-of-asserting-on-irrelevant-detail) for more on this.
+Now Go has generics, we now have a more expressive language which lets us make matchers that are type-safe, rather than relying on reflection. The problem with reflection is it can lead to lazy test writing, especially when you're dealing with complex types. Developers can lazily assert on complex types, which makes the tests harder to follow and more brittle. See the [curse of asserting on irrelevant detail](#the-curse-of-asserting-on-irrelevant-detail) for more on this.
 
 The trade-off we're making here though is you will have to make your own matchers for your own types at times. This is a good thing, as it forces you to think about what you're actually testing, and it makes your tests more readable and less brittle. There will be plenty of examples to show how, and you can read the existing standard library of matchers to see how it's done. Due to the compositional nature of the library though, you _should_ be able to leverage existing matchers for re-use. 
 
@@ -211,7 +211,7 @@ func HaveAllCaps(in string) matching.MatchResult {
 
 #### Higher-order matchers
 
-This is fine for simple matchers where you want to assert on a static property of `T`. Often though, you'll want to write matchers where you want to check a particular _property_. 
+This is fine for simple matchers where you want to assert on a static property of `T`. Often though, you'll want to write matchers where you want to check a particular _ value of a property_. 
 
 For this, no magic is required, just create a higher-order function that _returns_ a `Matcher[T]`. 
 
