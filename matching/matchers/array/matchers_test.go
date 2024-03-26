@@ -16,14 +16,20 @@ func TestArrayMatchers(t *testing.T) {
 
 		t.Run("failing", func(t *testing.T) {
 			t.Run("equal to", func(t *testing.T) {
-				spyTB := &SpyTB{}
-				Expect(spyTB, []string{"hello", "world"}).To(ContainItem(EqualTo("goodbye")))
-				Expect(t, spyTB).To(HaveError(`expected [hello world] to contain item be equal to goodbye, but it did not`))
+				VerifyFailingMatcher(
+					t,
+					[]string{"hello", "world"},
+					ContainItem(EqualTo("goodbye")),
+					`expected [hello world] to contain item be equal to goodbye, but it did not`,
+				)
 			})
 			t.Run("all caps", func(t *testing.T) {
-				spyTB := &SpyTB{}
-				Expect(spyTB, []string{"hello", "world"}).To(ContainItem(HaveAllCaps))
-				Expect(t, spyTB).To(HaveError(`expected [hello world] to contain item be in all caps, but it did not`))
+				VerifyFailingMatcher(
+					t,
+					[]string{"hello", "world"},
+					ContainItem(HaveAllCaps),
+					`expected [hello world] to contain item be in all caps, but it did not`,
+				)
 			})
 		})
 	})

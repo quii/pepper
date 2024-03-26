@@ -2,7 +2,7 @@
 
 Very much playing around, work in progress.
 
-## Hamcrest-style matchers for Go
+## Hamcrest-style, _type-safe_ test matchers for Go
 
 Like [gocrest](https://github.com/corbym/gocrest) but less mature and battle-tested. I'm making this purely to scratch an itch, but I do hope it is useful for some. The main purpose of writing this is for material for a chapter of [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests)
 
@@ -173,3 +173,39 @@ Often when we write a test, we only really care about the state of one field in 
 - Difficult to read, it's less obvious which effect you were hoping to exercise
 
 Matchers allow you to write _domain specific_ matching code, focused on the _specific effects_ you're looking for. When used well, with a domain-centric, well-designed codebase, you tend to build a useful library of matchers that you can **re-use and compose** to write clear, consistently written, less brittle tests.
+
+## Writing your own matchers
+
+### Test support
+
+It might be overkill to unit test matchers, but if you intend for them to be re-used a lot (like the library included in this package), it might be worth doing. 
+
+Thankfully, Pepper makes this easy
+
+Check out some of the unit tests for some of the comparison matchers
+
+```go
+func TestComparisonMatchers(t *testing.T) {
+	t.Run("Less than", func(t *testing.T) {
+		t.Run("passing", func(t *testing.T) {
+			Expect(t, 5).To(LessThan(6))
+		})
+
+		t.Run("failing", func(t *testing.T) {
+			spytb.VerifyFailingMatcher(t, 6, LessThan(6), "expected 6 to be less than 6")
+			spytb.VerifyFailingMatcher(t, 6, LessThan(3), "expected 6 to be less than 3")
+		})
+	})
+
+	t.Run("Greater than", func(t *testing.T) {
+		t.Run("passing", func(t *testing.T) {
+			Expect(t, 5).To(GreaterThan(4))
+		})
+
+		t.Run("failing", func(t *testing.T) {
+			spytb.VerifyFailingMatcher(t, 6, GreaterThan(6), "expected 6 to be greater than 6")
+			spytb.VerifyFailingMatcher(t, 2, GreaterThan(10), "expected 2 to be greater than 10")
+		})
+	})
+}
+```
