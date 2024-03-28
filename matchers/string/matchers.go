@@ -7,6 +7,8 @@ import (
 )
 
 // todo: this should be a higher order matcher so you can do HaveLength(LessThan(2)) - which then fits neatly into re-using comparable matchers
+// other note: i think And/Or can replace the wonky compose thing, maybe.
+
 func HaveLength(length int) pepper.Matcher[string] {
 	return func(in string) pepper.MatchResult {
 		return pepper.MatchResult{

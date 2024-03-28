@@ -10,10 +10,8 @@ import (
 
 func ExampleExpecter_To() {
 	t := &SpyTB{}
-	name := "Pepper"
-
-	Expect(t, name).To(EqualTo("Stanley"))
-	fmt.Println(t.ErrorCalls[0])
+	Expect(t, "Pepper").To(EqualTo("Stanley"))
+	fmt.Println(t.LastError())
 	//Output: expected Pepper to be equal to Stanley, but it was Pepper
 }
 
@@ -22,7 +20,7 @@ func ExampleMatcher_Or() {
 	tshirt := TShirt{Colour: "yellow"}
 
 	Expect(t, tshirt).To(HaveColour("blue").Or(HaveColour("red")))
-	fmt.Println(t.ErrorCalls[0])
+	fmt.Println(t.LastError())
 	//Output: expected the t-shirt to have colour "blue" or have colour "red", but it was "yellow"
 }
 
@@ -32,22 +30,22 @@ func ExampleNot() {
 	tshirt := TShirt{Colour: "yellow"}
 
 	Expect(t, tshirt).To(Not(HaveColour("yellow")))
-	fmt.Println(t.ErrorCalls[0])
+	fmt.Println(t.LastError())
 	//Output: expected the t-shirt to not have colour "yellow"
 }
 
 func ExampleMatcher_And() {
 	t := &SpyTB{}
-	score := Score{
+	player := Player{
 		Name:   "Chris",
 		Points: 11,
 	}
 
-	Expect(t, score).To(HaveScore(
-		GreaterThan(5).And(LessThan(10))),
-	)
-	fmt.Println(t.ErrorCalls[0])
-	//Output: expected Chris's score to be greater than 5 and be less than 10, but it was 11
+	Expect(t, player).To(HaveScore(
+		GreaterThan(5).And(LessThan(10)),
+	))
+	fmt.Println(t.LastError())
+	//Output: expected Player Chris to score be greater than 5 and be less than 10, but it was 11
 }
 
 func TestMatching(t *testing.T) {
@@ -140,20 +138,20 @@ func HaveColour(colour string) Matcher[TShirt] {
 	}
 }
 
-type Score struct {
+type Player struct {
 	Name   string
 	Points int
 }
 
-func (s Score) String() string {
-	return fmt.Sprintf("%s's score", s.Name)
+func (s Player) String() string {
+	return fmt.Sprintf("Player %s", s.Name)
 }
 
-func HaveScore(matcher Matcher[int]) Matcher[Score] {
-	return func(s Score) MatchResult {
+func HaveScore(matcher Matcher[int]) Matcher[Player] {
+	return func(s Player) MatchResult {
 		result := matcher(s.Points)
 		return MatchResult{
-			Description: result.Description,
+			Description: "score " + result.Description,
 			Matches:     result.Matches,
 			But:         fmt.Sprintf("it was %d", s.Points),
 		}

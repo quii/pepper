@@ -85,20 +85,8 @@ func (m Matcher[T]) And(matchers ...Matcher[T]) Matcher[T] {
 		result := m(got)
 
 		for _, matcher := range matchers {
-			result.Description += " and " + matcher(got).Description
-		}
-
-		if !result.Matches {
-			return result
-		}
-
-		for _, matcher := range matchers {
 			r := matcher(got)
-			if !r.Matches {
-				result.Matches = false
-				result.But = r.But
-				return result
-			}
+			result = result.Combine(r)
 		}
 
 		return result

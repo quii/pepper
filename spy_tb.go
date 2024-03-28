@@ -6,6 +6,14 @@ type SpyTB struct {
 	ErrorCalls []string
 }
 
+func (s *SpyTB) LastError() string {
+	if len(s.ErrorCalls) == 0 {
+		return ""
+	}
+
+	return s.ErrorCalls[len(s.ErrorCalls)-1]
+}
+
 func (s *SpyTB) String() string {
 	return "Spy TB"
 }
