@@ -52,6 +52,30 @@ func Not[T any](matcher Matcher[T]) Matcher[T] {
 	return negate(matcher)
 }
 
+func (m Matcher[T]) Or(matchers ...Matcher[T]) Matcher[T] {
+	return func(got T) MatchResult {
+		result := m(got)
+
+		for _, matcher := range matchers {
+			result.Description += " or " + matcher(got).Description
+		}
+
+		if result.Matches {
+			return result
+		}
+
+		for _, matcher := range matchers {
+			r := matcher(got)
+			if r.Matches {
+				result.Matches = true
+				return result
+			}
+		}
+
+		return result
+	}
+}
+
 func negate[T any](matcher Matcher[T]) Matcher[T] {
 	return func(got T) MatchResult {
 		result := matcher(got)

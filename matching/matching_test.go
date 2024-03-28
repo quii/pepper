@@ -1,11 +1,21 @@
 package matching_test
 
 import (
+	"fmt"
 	. "github.com/quii/pepper/matching"
 	. "github.com/quii/pepper/matching/matchers/comparable"
 	. "github.com/quii/pepper/matching/matchers/string"
 	"testing"
 )
+
+func ExampleMatcher_Or() {
+	t := &SpyTB{}
+	colour := "yellow"
+
+	Expect(t, colour).To(EqualTo("blue").Or(EqualTo("red")))
+	fmt.Println(t.ErrorCalls[0])
+	//Output: expected yellow to be equal to blue or be equal to red, but it was yellow
+}
 
 func TestStringMatchers(t *testing.T) {
 	t.Run("passing example", func(t *testing.T) {
