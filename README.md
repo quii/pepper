@@ -8,41 +8,9 @@ Inspired by [Hamcrest](https://hamcrest.org)
 
 ## Examples
 
-Simple examples
+You can find high-level examples in the [GoDoc](https://pkg.go.dev/github.com/quii/pepper#pkg-examples). 
 
-```go
-Expect(t, []string{"hello", "WORLD"}).To(ContainItem(HaveAllCaps))
-
-Expect(spyTB, []string{"hello", "world"}).To(ContainItem(EqualTo("goodbye")))
-
-Expect(t, "hello").To(HaveLength(5))
-```
-
-HTTP response examples
-
-```go
-t.Run("simple string match", func(t *testing.T) {
-    res := httptest.NewRecorder()
-
-    res.Body.WriteString("Hello, world")
-
-    // see how we can compose and re-use matchers
-    Expect(t, res.Result()).To(HaveBody(EqualTo("Hello, world")))
-})
-
-t.Run("compose http matchers", func(t *testing.T) {
-    res := httptest.NewRecorder()
-
-    res.Body.WriteString(`{"name": "Egg", "completed": false}`)
-    res.Header().Add("content-type", "application/json")
-
-    Expect(t, res.Result()).To(
-        BeOK,
-        HaveJSONHeader,
-        HaveBody(WithTodoNameOf("Egg"), Not(WithCompletedTODO)),
-    )
-})
-```
+The matchers, which you can find in the [directories section](https://pkg.go.dev/github.com/quii/pepper#pkg-examples) also have examples.
 
 ## Trade-offs and optimisations
 
@@ -228,6 +196,35 @@ func EqualTo[T comparable](in T) matching.Matcher[T] {
 	}
 }
 ```
+
+#### Leveraging composition
+
+When designing your higher-order matchers, think about how the value you are matching against could be matched with other matchers you may not have thought of. 
+
+For example, `HasSize`, I could've written like this:
+
+```go
+func HaveSize[T any](size int) pepper.Matcher[[]T]
+```
+
+However, this needlessly couples the matcher to the specific matching I was currently catering for (logically `EqualTo`). Instead, we can design our matcher to be combined with other matchers that work on `int`.
+
+```go
+func HaveSize[T any](matcher pepper.Matcher[int]) pepper.Matcher[[]T] {
+	return func(items []T) pepper.MatchResult {
+		return matcher(len(items))
+	}
+}
+```
+
+This way, users can use this matcher in different ways, like checking if a slice has a size `LessThan(5)` or `GreaterThan(3)`.
+
+With this simple change, users can leverage the _other composition tools like `And`:
+
+```go
+Expect(t, catsInAHotel).To(HaveSize(GreaterThan(3).And(LessThan(10))))
+```
+
 
 ### Test support
 

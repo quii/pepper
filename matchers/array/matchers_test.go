@@ -19,6 +19,16 @@ func ExampleContainItem() {
 	//Output: expected [hello world] to contain item be in all caps, but it did not
 }
 
+func ExampleHaveSize() {
+	t := &SpyTB{}
+
+	anArray := []string{"hello", "world"}
+	Expect(t, anArray).To(HaveSize[string](EqualTo(2)))
+
+	fmt.Println(t.LastError())
+	//Output:
+}
+
 func TestArrayMatchers(t *testing.T) {
 	t.Run("contain with other matcher to find matcher", func(t *testing.T) {
 		t.Run("passing", func(t *testing.T) {
