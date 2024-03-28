@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// HaveStatus returns a matcher that checks if the response status code is equal to the given status code.
 func HaveStatus(status int) pepper.Matcher[*http.Response] {
 	return func(res *http.Response) pepper.MatchResult {
 		return pepper.MatchResult{
@@ -18,10 +19,12 @@ func HaveStatus(status int) pepper.Matcher[*http.Response] {
 	}
 }
 
+// BeOK is a convenience matcher for HaveStatus(http.StatusOK).
 func BeOK(res *http.Response) pepper.MatchResult {
 	return HaveStatus(http.StatusOK)(res)
 }
 
+// HaveHeader returns a matcher that checks if the response has a header with the given name and value.
 func HaveHeader(header, value string) pepper.Matcher[*http.Response] {
 	return func(res *http.Response) pepper.MatchResult {
 		return pepper.MatchResult{
@@ -33,10 +36,12 @@ func HaveHeader(header, value string) pepper.Matcher[*http.Response] {
 	}
 }
 
+// HaveJSONHeader is a convenience matcher for HaveHeader("content-type", "application/json").
 func HaveJSONHeader(res *http.Response) pepper.MatchResult {
 	return HaveHeader("content-type", "application/json")(res)
 }
 
+// HaveBody returns a matcher that checks if the response body meets the given matchers' criteria.
 func HaveBody(bodyMatchers pepper.Matcher[string]) pepper.Matcher[*http.Response] {
 	return func(res *http.Response) pepper.MatchResult {
 		body, _ := io.ReadAll(res.Body)

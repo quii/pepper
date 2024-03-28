@@ -5,6 +5,7 @@ import (
 	"github.com/quii/pepper"
 )
 
+// HaveKey checks if a map has a key with a specific value.
 func HaveKey[K comparable, V any](key K, valueMatcher pepper.Matcher[V]) pepper.Matcher[map[K]V] {
 	return func(m map[K]V) pepper.MatchResult {
 		if value, ok := m[key]; ok {
@@ -30,6 +31,7 @@ func HaveKey[K comparable, V any](key K, valueMatcher pepper.Matcher[V]) pepper.
 	}
 }
 
+// WithAnyValue lets you match any value, useful if you're just looking for the presence of a key.
 func WithAnyValue[T any]() pepper.Matcher[T] {
 	return func(T) pepper.MatchResult {
 		return pepper.MatchResult{
