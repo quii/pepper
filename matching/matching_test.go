@@ -8,16 +8,35 @@ import (
 	"testing"
 )
 
-func ExampleMatcher_Or() {
+func ExampleExpecter_To() {
 	t := &SpyTB{}
-	colour := "yellow"
+	name := "Pepper"
 
-	Expect(t, colour).To(EqualTo("blue").Or(EqualTo("red")))
+	Expect(t, name).To(EqualTo("Stanley"))
 	fmt.Println(t.ErrorCalls[0])
-	//Output: expected yellow to be equal to blue or be equal to red, but it was yellow
+	//Output: expected Pepper to be equal to Stanley, but it was Pepper
 }
 
-func TestStringMatchers(t *testing.T) {
+func ExampleMatcher_Or() {
+	t := &SpyTB{}
+	tshirt := TShirt{Colour: "yellow"}
+
+	Expect(t, tshirt).To(HaveColour("blue").Or(HaveColour("red")))
+	fmt.Println(t.ErrorCalls[0])
+	//Output: expected the t-shirt to have colour "blue" or have colour "red", but it was "yellow"
+}
+
+func ExampleNot() {
+	t := &SpyTB{}
+
+	tshirt := TShirt{Colour: "yellow"}
+
+	Expect(t, tshirt).To(Not(HaveColour("yellow")))
+	fmt.Println(t.ErrorCalls[0])
+	//Output: expected the t-shirt to not have colour "yellow"
+}
+
+func TestMatching(t *testing.T) {
 	t.Run("passing example", func(t *testing.T) {
 		Expect(t, "hello").To(
 			HaveLength(5),
@@ -87,4 +106,22 @@ func TestStringMatchers(t *testing.T) {
 			Expect(t, actual).To(EqualTo(expected))
 		})
 	})
+}
+
+type TShirt struct {
+	Colour string
+}
+
+func (t TShirt) String() string {
+	return "the t-shirt"
+}
+
+func HaveColour(colour string) Matcher[TShirt] {
+	return func(t TShirt) MatchResult {
+		return MatchResult{
+			Description: fmt.Sprintf("have colour %q", colour),
+			Matches:     t.Colour == colour,
+			But:         fmt.Sprintf("it was %q", t.Colour),
+		}
+	}
 }

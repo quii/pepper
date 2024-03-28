@@ -32,7 +32,11 @@ func (e Expecter[T]) To(matchers ...Matcher[T]) {
 	for _, matcher := range matchers {
 		result := matcher(e.Subject)
 		if result.SubjectName == "" {
-			result.SubjectName = fmt.Sprintf("%v", e.Subject)
+			if str, isStringer := any(e.Subject).(fmt.Stringer); isStringer {
+				result.SubjectName = str.String()
+			} else {
+				result.SubjectName = fmt.Sprintf("%v", e.Subject)
+			}
 		}
 		if !result.Matches {
 			if result.But != "" {
