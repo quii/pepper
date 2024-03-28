@@ -18,8 +18,8 @@ func Example() {
 		Doesnt(HaveAllCaps),
 	)
 
-	fmt.Println(len(t.ErrorCalls)) // no error calls means it passed
-	//Output: 0
+	fmt.Println(t.LastError()) // no error calls means it passed
+	//Output:
 }
 func TestStringMatchers(t *testing.T) {
 	t.Run("Have length", func(t *testing.T) {

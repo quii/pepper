@@ -13,7 +13,7 @@ func ExampleHaveKey() {
 
 	Expect(t, map[string]string{"hello": "world"}).To(HaveKey("goodbye", WithAnyValue[string]()))
 
-	fmt.Println(t.ErrorCalls[0])
+	fmt.Println(t.LastError())
 	//Output: expected map[hello:world] to have key goodbye, but it did not
 }
 
@@ -22,7 +22,7 @@ func ExampleWithValue() {
 
 	Expect(t, map[string]int{"score": 4}).To(HaveKey("score", WithValue(GreaterThan(5), LessThan(10))))
 
-	fmt.Println(t.ErrorCalls[0])
+	fmt.Println(t.LastError())
 	//Output: expected map[score:4] to have key score with value be greater than 5, but it was 4
 }
 

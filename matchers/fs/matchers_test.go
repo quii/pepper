@@ -11,16 +11,16 @@ import (
 )
 
 func ExampleHaveFileCalled() {
-	spyTB := &SpyTB{}
+	t := &SpyTB{}
 	stubFS := fstest.MapFS{
 		"someFile.txt": {
 			Data: []byte("hello world"),
 		},
 	}
 
-	Expect[fs.FS](spyTB, stubFS).To(HaveFileCalled("someFile.txt", HaveSubstring("Pluto")))
+	Expect[fs.FS](t, stubFS).To(HaveFileCalled("someFile.txt", HaveSubstring("Pluto")))
 
-	fmt.Println(spyTB.ErrorCalls[0])
+	fmt.Println(t.LastError())
 	//Output: expected file called someFile.txt to contain "Pluto"
 }
 

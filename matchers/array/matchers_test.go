@@ -15,7 +15,7 @@ func ExampleContainItem() {
 	anArray := []string{"hello", "world"}
 	Expect(t, anArray).To(ContainItem(HaveAllCaps))
 
-	fmt.Println(t.ErrorCalls[0])
+	fmt.Println(t.LastError())
 	//Output: expected [hello world] to contain item be in all caps, but it did not
 }
 
