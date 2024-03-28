@@ -2,9 +2,9 @@ package fs
 
 import (
 	"fmt"
-	. "github.com/quii/pepper/matching"
-	"github.com/quii/pepper/matching/matchers/spytb"
-	. "github.com/quii/pepper/matching/matchers/string"
+	. "github.com/quii/pepper"
+	"github.com/quii/pepper/matchers/spytb"
+	. "github.com/quii/pepper/matchers/string"
 	"io/fs"
 	"testing"
 	"testing/fstest"

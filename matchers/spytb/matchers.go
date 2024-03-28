@@ -2,18 +2,18 @@ package spytb
 
 import (
 	"fmt"
-	"github.com/quii/pepper/matching"
+	"github.com/quii/pepper"
 )
 
-func HaveError(s string) matching.Matcher[*matching.SpyTB] {
-	return func(tb *matching.SpyTB) matching.MatchResult {
+func HaveError(s string) pepper.Matcher[*pepper.SpyTB] {
+	return func(tb *pepper.SpyTB) pepper.MatchResult {
 		found := false
 		for _, e := range tb.ErrorCalls {
 			if e == s {
 				found = true
 			}
 		}
-		return matching.MatchResult{
+		return pepper.MatchResult{
 			Description: fmt.Sprintf("have error %q", s),
 			Matches:     found,
 			But:         fmt.Sprintf("has %v", tb.ErrorCalls),
@@ -21,8 +21,8 @@ func HaveError(s string) matching.Matcher[*matching.SpyTB] {
 	}
 }
 
-func HaveNoErrors(tb *matching.SpyTB) matching.MatchResult {
-	return matching.MatchResult{
+func HaveNoErrors(tb *pepper.SpyTB) pepper.MatchResult {
+	return pepper.MatchResult{
 		Description: "have no errors",
 		Matches:     len(tb.ErrorCalls) == 0,
 		But:         fmt.Sprintf("it had errors %v", tb.ErrorCalls),

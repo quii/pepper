@@ -1,15 +1,17 @@
 package array
 
-import "github.com/quii/pepper/matching"
+import (
+	"github.com/quii/pepper"
+)
 
-func ContainItem[T any](m matching.Matcher[T]) matching.Matcher[[]T] {
-	return func(items []T) matching.MatchResult {
-		var exampleFailure matching.MatchResult
+func ContainItem[T any](m pepper.Matcher[T]) pepper.Matcher[[]T] {
+	return func(items []T) pepper.MatchResult {
+		var exampleFailure pepper.MatchResult
 
 		for _, item := range items {
 			result := m(item)
 			if result.Matches {
-				return matching.MatchResult{
+				return pepper.MatchResult{
 					Description: "contain item",
 					Matches:     true,
 				}
@@ -25,6 +27,6 @@ func ContainItem[T any](m matching.Matcher[T]) matching.Matcher[[]T] {
 	}
 }
 
-func EveryItem[T any](m matching.Matcher[T]) matching.Matcher[[]T] {
+func EveryItem[T any](m pepper.Matcher[T]) pepper.Matcher[[]T] {
 	panic("not yet implemented")
 }

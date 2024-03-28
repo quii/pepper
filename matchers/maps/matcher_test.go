@@ -2,9 +2,9 @@ package maps
 
 import (
 	"fmt"
-	. "github.com/quii/pepper/matching"
-	. "github.com/quii/pepper/matching/matchers/comparable"
-	"github.com/quii/pepper/matching/matchers/spytb"
+	. "github.com/quii/pepper"
+	. "github.com/quii/pepper/matchers/comparable"
+	"github.com/quii/pepper/matchers/spytb"
 	"testing"
 )
 

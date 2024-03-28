@@ -1,19 +1,19 @@
 package fs
 
 import (
-	"github.com/quii/pepper/matching"
+	"github.com/quii/pepper"
 	"io"
 	"io/fs"
 )
 
 const subjectName = "file system"
 
-func HaveFileCalled(name string, contentsMatchers ...matching.Matcher[string]) matching.Matcher[fs.FS] {
-	return func(fileSystem fs.FS) matching.MatchResult {
+func HaveFileCalled(name string, contentsMatchers ...pepper.Matcher[string]) pepper.Matcher[fs.FS] {
+	return func(fileSystem fs.FS) pepper.MatchResult {
 		file, err := fileSystem.Open(name)
 
 		if err != nil {
-			return matching.MatchResult{
+			return pepper.MatchResult{
 				Description: "have file called " + name,
 				Matches:     false,
 				But:         "it did not",
@@ -35,7 +35,7 @@ func HaveFileCalled(name string, contentsMatchers ...matching.Matcher[string]) m
 			}
 		}
 
-		return matching.MatchResult{
+		return pepper.MatchResult{
 			Description: "have file called " + name,
 			Matches:     true,
 			SubjectName: subjectName,

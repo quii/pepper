@@ -1,7 +1,7 @@
 package spytb
 
 import (
-	. "github.com/quii/pepper/matching"
+	. "github.com/quii/pepper"
 	"testing"
 )
 

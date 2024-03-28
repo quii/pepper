@@ -3,12 +3,12 @@ package comparable
 import (
 	"cmp"
 	"fmt"
-	"github.com/quii/pepper/matching"
+	"github.com/quii/pepper"
 )
 
-func EqualTo[T comparable](in T) matching.Matcher[T] {
-	return func(got T) matching.MatchResult {
-		return matching.MatchResult{
+func EqualTo[T comparable](in T) pepper.Matcher[T] {
+	return func(got T) pepper.MatchResult {
+		return pepper.MatchResult{
 			Description: fmt.Sprintf("be equal to %+v", in),
 			Matches:     got == in,
 			But:         fmt.Sprintf("it was %v", got),
@@ -16,9 +16,9 @@ func EqualTo[T comparable](in T) matching.Matcher[T] {
 	}
 }
 
-func LessThan[T cmp.Ordered](in T) matching.Matcher[T] {
-	return func(got T) matching.MatchResult {
-		return matching.MatchResult{
+func LessThan[T cmp.Ordered](in T) pepper.Matcher[T] {
+	return func(got T) pepper.MatchResult {
+		return pepper.MatchResult{
 			Description: fmt.Sprintf("be less than %v", in),
 			Matches:     got < in,
 			But:         fmt.Sprintf("it was %v", got),
@@ -26,9 +26,9 @@ func LessThan[T cmp.Ordered](in T) matching.Matcher[T] {
 	}
 }
 
-func GreaterThan[T cmp.Ordered](in T) matching.Matcher[T] {
-	return func(got T) matching.MatchResult {
-		return matching.MatchResult{
+func GreaterThan[T cmp.Ordered](in T) pepper.Matcher[T] {
+	return func(got T) pepper.MatchResult {
+		return pepper.MatchResult{
 			Description: fmt.Sprintf("be greater than %v", in),
 			Matches:     got > in,
 			But:         fmt.Sprintf("it was %v", got),

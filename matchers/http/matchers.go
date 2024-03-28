@@ -2,14 +2,14 @@ package http
 
 import (
 	"fmt"
-	"github.com/quii/pepper/matching"
+	"github.com/quii/pepper"
 	"io"
 	"net/http"
 )
 
-func HaveStatus(status int) matching.Matcher[*http.Response] {
-	return func(res *http.Response) matching.MatchResult {
-		return matching.MatchResult{
+func HaveStatus(status int) pepper.Matcher[*http.Response] {
+	return func(res *http.Response) pepper.MatchResult {
+		return pepper.MatchResult{
 			Description: fmt.Sprintf("have status of %d", status),
 			But:         fmt.Sprintf("it was %d", res.StatusCode),
 			Matches:     res.StatusCode == status,
@@ -18,13 +18,13 @@ func HaveStatus(status int) matching.Matcher[*http.Response] {
 	}
 }
 
-func BeOK(res *http.Response) matching.MatchResult {
+func BeOK(res *http.Response) pepper.MatchResult {
 	return HaveStatus(http.StatusOK)(res)
 }
 
-func HaveHeader(header, value string) matching.Matcher[*http.Response] {
-	return func(res *http.Response) matching.MatchResult {
-		return matching.MatchResult{
+func HaveHeader(header, value string) pepper.Matcher[*http.Response] {
+	return func(res *http.Response) pepper.MatchResult {
+		return pepper.MatchResult{
 			Description: fmt.Sprintf("have header %q of %q", header, value),
 			Matches:     res.Header.Get(header) == value,
 			But:         fmt.Sprintf("it was %q", res.Header.Get(header)),
@@ -33,15 +33,15 @@ func HaveHeader(header, value string) matching.Matcher[*http.Response] {
 	}
 }
 
-func HaveJSONHeader(res *http.Response) matching.MatchResult {
+func HaveJSONHeader(res *http.Response) pepper.MatchResult {
 	return HaveHeader("content-type", "application/json")(res)
 }
 
-func HaveBody(bodyMatchers ...matching.Matcher[string]) matching.Matcher[*http.Response] {
+func HaveBody(bodyMatchers ...pepper.Matcher[string]) pepper.Matcher[*http.Response] {
 	bodyExtractor := func(res *http.Response) string {
 		body, _ := io.ReadAll(res.Body)
 		return string(body)
 	}
 
-	return matching.Compose(bodyExtractor, "the response body", bodyMatchers...)
+	return pepper.Compose(bodyExtractor, "the response body", bodyMatchers...)
 }
