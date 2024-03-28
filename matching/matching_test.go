@@ -36,6 +36,20 @@ func ExampleNot() {
 	//Output: expected the t-shirt to not have colour "yellow"
 }
 
+func ExampleMatcher_And() {
+	t := &SpyTB{}
+	score := Score{
+		Name:   "Chris",
+		Points: 11,
+	}
+
+	Expect(t, score).To(HaveScore(
+		GreaterThan(5).And(LessThan(10))),
+	)
+	fmt.Println(t.ErrorCalls[0])
+	//Output: expected Chris's score to be greater than 5 and be less than 10, but it was 11
+}
+
 func TestMatching(t *testing.T) {
 	t.Run("passing example", func(t *testing.T) {
 		Expect(t, "hello").To(
@@ -122,6 +136,26 @@ func HaveColour(colour string) Matcher[TShirt] {
 			Description: fmt.Sprintf("have colour %q", colour),
 			Matches:     t.Colour == colour,
 			But:         fmt.Sprintf("it was %q", t.Colour),
+		}
+	}
+}
+
+type Score struct {
+	Name   string
+	Points int
+}
+
+func (s Score) String() string {
+	return fmt.Sprintf("%s's score", s.Name)
+}
+
+func HaveScore(matcher Matcher[int]) Matcher[Score] {
+	return func(s Score) MatchResult {
+		result := matcher(s.Points)
+		return MatchResult{
+			Description: result.Description,
+			Matches:     result.Matches,
+			But:         fmt.Sprintf("it was %d", s.Points),
 		}
 	}
 }
