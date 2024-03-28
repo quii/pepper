@@ -7,3 +7,4 @@ linters:
     - unconvert
     - misspell
     - whitespace
+    - gocritic

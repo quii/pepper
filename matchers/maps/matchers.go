@@ -5,17 +5,15 @@ import (
 	"github.com/quii/pepper"
 )
 
-func HaveKey[K comparable, V any](key K, valueMatchers []pepper.Matcher[V]) pepper.Matcher[map[K]V] {
+func HaveKey[K comparable, V any](key K, valueMatcher pepper.Matcher[V]) pepper.Matcher[map[K]V] {
 	return func(m map[K]V) pepper.MatchResult {
 		if value, ok := m[key]; ok {
-			for _, valueMatcher := range valueMatchers {
-				result := valueMatcher(value)
-				if !result.Matches {
-					return pepper.MatchResult{
-						Description: fmt.Sprintf("have key %v with value %v", key, result.Description),
-						Matches:     false,
-						But:         result.But,
-					}
+			result := valueMatcher(value)
+			if !result.Matches {
+				return pepper.MatchResult{
+					Description: fmt.Sprintf("have key %v with value %v", key, result.Description),
+					Matches:     false,
+					But:         result.But,
 				}
 			}
 
@@ -32,13 +30,10 @@ func HaveKey[K comparable, V any](key K, valueMatchers []pepper.Matcher[V]) pepp
 	}
 }
 
-func WithValue[T any](valueMatcher ...pepper.Matcher[T]) []pepper.Matcher[T] {
-	for i := range valueMatcher {
-		valueMatcher[i] = pepper.Compose(func(v T) T { return v }, "value", valueMatcher[i])
+func WithAnyValue[T any]() pepper.Matcher[T] {
+	return func(T) pepper.MatchResult {
+		return pepper.MatchResult{
+			Matches: true,
+		}
 	}
-	return valueMatcher
-}
-
-func WithAnyValue[T any]() []pepper.Matcher[T] {
-	return nil
 }

@@ -37,11 +37,11 @@ func HaveJSONHeader(res *http.Response) pepper.MatchResult {
 	return HaveHeader("content-type", "application/json")(res)
 }
 
-func HaveBody(bodyMatchers ...pepper.Matcher[string]) pepper.Matcher[*http.Response] {
-	bodyExtractor := func(res *http.Response) string {
+func HaveBody(bodyMatchers pepper.Matcher[string]) pepper.Matcher[*http.Response] {
+	return func(res *http.Response) pepper.MatchResult {
 		body, _ := io.ReadAll(res.Body)
-		return string(body)
+		result := bodyMatchers(string(body))
+		result.SubjectName = "the response body"
+		return result
 	}
-
-	return pepper.Compose(bodyExtractor, "the response body", bodyMatchers...)
 }

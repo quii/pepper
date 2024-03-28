@@ -133,28 +133,3 @@ func (m MatchResult) Combine(other MatchResult) MatchResult {
 		SubjectName: m.SubjectName,
 	}
 }
-
-func Compose[A, B any](getSubject func(A) B, subjectName string, matchers ...Matcher[B]) Matcher[A] {
-	return func(parentSubject A) MatchResult {
-		childSubject := getSubject(parentSubject)
-
-		var combinedMatchResults = MatchResult{
-			SubjectName: subjectName,
-		}
-
-		hasMatched := true
-
-		for _, matcher := range matchers {
-			result := matcher(childSubject)
-			result.SubjectName = subjectName
-			if !result.Matches {
-				hasMatched = false
-				combinedMatchResults = combinedMatchResults.Combine(result)
-			}
-		}
-
-		combinedMatchResults.Matches = hasMatched
-
-		return combinedMatchResults
-	}
-}

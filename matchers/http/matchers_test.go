@@ -88,7 +88,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				spyTB := &SpyTB{}
 
 				res.Body.WriteString(`{"name": "Egg", "completed": false}`)
-				Expect(spyTB, res.Result()).To(HaveBody(WithTodoNameOf("Bacon"), WithCompletedTODO))
+				Expect(spyTB, res.Result()).To(HaveBody(WithTodoNameOf("Bacon").And(WithCompletedTODO)))
 				Expect(t, spyTB).To(
 					HaveError(`expected the response body to have a todo name of "Bacon" and have a completed todo, but it was "Egg" and it wasn't complete`),
 				)
@@ -114,7 +114,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				Expect(t, res.Result()).To(
 					BeOK,
 					HaveJSONHeader,
-					HaveBody(WithTodoNameOf("Egg"), Not(WithCompletedTODO)),
+					HaveBody(WithTodoNameOf("Egg").And(Not(WithCompletedTODO))),
 				)
 			})
 
@@ -127,9 +127,9 @@ func TestHTTPTestMatchers(t *testing.T) {
 				Expect(spyTB, res.Result()).To(
 					BeOK,
 					HaveJSONHeader,
-					HaveBody(WithTodoNameOf("Egg"), Not(WithCompletedTODO)),
+					HaveBody(WithTodoNameOf("Egg").And(Not(WithCompletedTODO))),
 				)
-				Expect(t, spyTB).To(HaveError(`expected the response body to not have a completed todo`))
+				Expect(t, spyTB).To(HaveError(`expected the response body to have a todo name of "Egg" and not have a completed todo`))
 				Expect(t, spyTB).To(HaveError(`expected the response to have header "content-type" of "application/json", but it was ""`))
 			})
 		})
