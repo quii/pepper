@@ -6,19 +6,16 @@ import (
 	"strings"
 )
 
-// todo: this should be a higher order matcher so you can do HaveLength(LessThan(2)) - which then fits neatly into re-using comparable matchers
-// other note: i think And/Or can replace the wonky compose thing, maybe.
-
-func HaveLength(length int) pepper.Matcher[string] {
+// HaveLength will check a string's length meets the given matcher's criteria.
+func HaveLength(matcher pepper.Matcher[int]) pepper.Matcher[string] {
 	return func(in string) pepper.MatchResult {
-		return pepper.MatchResult{
-			Description: fmt.Sprintf("have length of %d", length),
-			Matches:     len(in) == length,
-			But:         fmt.Sprintf("it has a length of %d", len(in)),
-		}
+		result := matcher(len(in))
+		result.Description = fmt.Sprintf("have length %v", result.Description)
+		return result
 	}
 }
 
+// HaveAllCaps will check if a string is in all caps.
 func HaveAllCaps(in string) pepper.MatchResult {
 	return pepper.MatchResult{
 		Description: "be in all caps",
@@ -27,6 +24,7 @@ func HaveAllCaps(in string) pepper.MatchResult {
 	}
 }
 
+// HaveSubstring will check if a string contains a given substring.
 func HaveSubstring(substring string) pepper.Matcher[string] {
 	return func(in string) pepper.MatchResult {
 		return pepper.MatchResult{

@@ -12,7 +12,7 @@ func Example() {
 	t := &SpyTB{}
 
 	Expect(t, "hello").To(
-		HaveLength(5),
+		HaveLength(EqualTo(5)),
 		EqualTo("hello"),
 		HaveSubstring("ell"),
 		Doesnt(HaveAllCaps),
@@ -24,13 +24,13 @@ func Example() {
 func TestStringMatchers(t *testing.T) {
 	t.Run("Have length", func(t *testing.T) {
 		t.Run("passing", func(t *testing.T) {
-			Expect(t, "hello").To(HaveLength(5))
+			Expect(t, "hello").To(HaveLength(EqualTo(5)))
 		})
 
 		t.Run("failing", func(t *testing.T) {
 			spyTB := &SpyTB{}
-			Expect(spyTB, "goodbye").To(HaveLength(5))
-			Expect(t, spyTB).To(HaveError("expected goodbye to have length of 5, but it has a length of 7"))
+			Expect(spyTB, "goodbye").To(HaveLength(EqualTo(5)))
+			Expect(t, spyTB).To(HaveError("expected goodbye to have length be equal to 5, but it was 7"))
 		})
 	})
 }

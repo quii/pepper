@@ -51,7 +51,7 @@ func ExampleMatcher_And() {
 func TestMatching(t *testing.T) {
 	t.Run("passing example", func(t *testing.T) {
 		Expect(t, "hello").To(
-			HaveLength(5),
+			HaveLength(EqualTo(5)),
 			EqualTo("hello"),
 			HaveSubstring("ell"),
 			Doesnt(HaveAllCaps),
@@ -61,13 +61,13 @@ func TestMatching(t *testing.T) {
 	t.Run("combining failures", func(t *testing.T) {
 		t.Run("when it has a but and both failed", func(t *testing.T) {
 			someString := "goodbye"
-			result1 := HaveLength(5)(someString)
+			result1 := HaveLength(EqualTo(5))(someString)
 			result2 := HaveAllCaps(someString)
 
 			expected := MatchResult{
-				Description: `have length of 5 and be in all caps`,
+				Description: `have length be equal to 5 and be in all caps`,
 				Matches:     false,
-				But:         "it has a length of 7 and it was not in all caps",
+				But:         "it was 7 and it was not in all caps",
 			}
 
 			actual := result1.Combine(result2)
@@ -76,11 +76,11 @@ func TestMatching(t *testing.T) {
 
 		t.Run("when nothing fails", func(t *testing.T) {
 			someString := "HELLO"
-			result1 := HaveLength(5)(someString)
+			result1 := HaveLength(EqualTo(5))(someString)
 			result2 := HaveAllCaps(someString)
 
 			expected := MatchResult{
-				Description: `have length of 5 and be in all caps`,
+				Description: `have length be equal to 5 and be in all caps`,
 				Matches:     true,
 			}
 
@@ -90,11 +90,11 @@ func TestMatching(t *testing.T) {
 
 		t.Run("when first match is passing but second is failing", func(t *testing.T) {
 			someString := "hello"
-			result1 := HaveLength(5)(someString)
+			result1 := HaveLength(EqualTo(5))(someString)
 			result2 := HaveAllCaps(someString)
 
 			expected := MatchResult{
-				Description: `have length of 5 and be in all caps`,
+				Description: `have length be equal to 5 and be in all caps`,
 				Matches:     false,
 				But:         "it was not in all caps",
 			}
@@ -105,13 +105,13 @@ func TestMatching(t *testing.T) {
 
 		t.Run("when first match is failing but second is passing", func(t *testing.T) {
 			someString := "GOODBYE"
-			result1 := HaveLength(5)(someString)
+			result1 := HaveLength(EqualTo(5))(someString)
 			result2 := HaveAllCaps(someString)
 
 			expected := MatchResult{
-				Description: `have length of 5 and be in all caps`,
+				Description: `have length be equal to 5 and be in all caps`,
 				Matches:     false,
-				But:         "it has a length of 7",
+				But:         "it was 7",
 			}
 
 			actual := result1.Combine(result2)

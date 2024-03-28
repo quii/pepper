@@ -3,6 +3,7 @@ package pepper
 import "fmt"
 
 type (
+	// TB is a cut-down version of testing.TB.
 	TB interface {
 		Error(args ...any)
 		Errorf(format string, args ...any)
@@ -20,13 +21,16 @@ type (
 		Subject T
 	}
 
+	// Matcher is a function that takes a subject T and returns a MatchResult.
 	Matcher[T any] func(T) MatchResult
 )
 
+// Expect is the entry point for the matcher DSL. Pass in the testing.TB and the subject you want to test.
 func Expect[T any](t TB, subject T) Expecter[T] {
 	return Expecter[T]{t, subject}
 }
 
+// To is the method that actually runs the matchers. It will call Errorf on the testing.TB if any of the matchers fail.
 func (e Expecter[T]) To(matchers ...Matcher[T]) {
 	e.t.Helper()
 	for _, matcher := range matchers {
@@ -48,14 +52,17 @@ func (e Expecter[T]) To(matchers ...Matcher[T]) {
 	}
 }
 
+// Doesnt is a helper function to negate a matcher.
 func Doesnt[T any](matcher Matcher[T]) Matcher[T] {
 	return negate(matcher)
 }
 
+// Not is a helper function to negate a matcher.
 func Not[T any](matcher Matcher[T]) Matcher[T] {
 	return negate(matcher)
 }
 
+// Or combines matchers with a boolean OR.
 func (m Matcher[T]) Or(matchers ...Matcher[T]) Matcher[T] {
 	return func(got T) MatchResult {
 		result := m(got)
@@ -80,6 +87,7 @@ func (m Matcher[T]) Or(matchers ...Matcher[T]) Matcher[T] {
 	}
 }
 
+// And combines matchers with a boolean AND.
 func (m Matcher[T]) And(matchers ...Matcher[T]) Matcher[T] {
 	return func(got T) MatchResult {
 		result := m(got)
@@ -103,10 +111,12 @@ func negate[T any](matcher Matcher[T]) Matcher[T] {
 	}
 }
 
+// Zero returns true if the MatchResult is the zero value.
 func (m MatchResult) Zero() bool {
 	return m.Description == "" && m.But == "" && !m.Matches
 }
 
+// Combine merges two MatchResults into one.
 func (m MatchResult) Combine(other MatchResult) MatchResult {
 	if m.Zero() {
 		return other
