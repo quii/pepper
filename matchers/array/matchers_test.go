@@ -29,6 +29,16 @@ func ExampleHaveSize() {
 	//Output:
 }
 
+func ExampleEveryItem() {
+	t := &SpyTB{}
+
+	anArray := []string{"hello", "world"}
+	Expect(t, anArray).To(EveryItem(HaveSubstring("h")))
+
+	fmt.Println(t.LastError())
+	//Output: expected [hello world] to have every item contain "h"
+}
+
 func TestArrayMatchers(t *testing.T) {
 	t.Run("contain with other matcher to find matcher", func(t *testing.T) {
 		t.Run("passing", func(t *testing.T) {

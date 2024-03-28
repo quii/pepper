@@ -8,6 +8,7 @@ import (
 
 const subjectName = "file system"
 
+// HaveFileCalled checks if a file exists in the file system, and can run additional matchers on its contents.
 func HaveFileCalled(name string, contentsMatchers ...pepper.Matcher[string]) pepper.Matcher[fs.FS] {
 	return func(fileSystem fs.FS) pepper.MatchResult {
 		file, err := fileSystem.Open(name)
