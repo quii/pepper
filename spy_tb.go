@@ -2,6 +2,7 @@ package pepper
 
 import "fmt"
 
+// SpyTB is a test helper that records calls to Error. This lets us create tests and examples to demonstrate what happens when a test fails.
 type SpyTB struct {
 	ErrorCalls []string
 }

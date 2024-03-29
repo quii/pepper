@@ -9,7 +9,7 @@ import (
 const subjectName = "file system"
 
 // HaveFileCalled checks if a file exists in the file system, and can run additional matchers on its contents.
-func HaveFileCalled(name string, contentsMatchers ...pepper.Matcher[string]) pepper.Matcher[fs.FS] {
+func HaveFileCalled(name string, contentMatcher ...pepper.Matcher[string]) pepper.Matcher[fs.FS] {
 	return func(fileSystem fs.FS) pepper.MatchResult {
 		file, err := fileSystem.Open(name)
 
@@ -24,10 +24,10 @@ func HaveFileCalled(name string, contentsMatchers ...pepper.Matcher[string]) pep
 
 		defer file.Close()
 
-		if len(contentsMatchers) > 0 {
+		if len(contentMatcher) > 0 {
 			all, _ := io.ReadAll(file)
 			contents := string(all)
-			for _, matcher := range contentsMatchers {
+			for _, matcher := range contentMatcher {
 				result := matcher(contents)
 				result.SubjectName = "file called " + name
 				if !result.Matches {
