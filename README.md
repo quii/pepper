@@ -12,6 +12,14 @@ You can find high-level examples in the [GoDoc](https://pkg.go.dev/github.com/qu
 
 The matchers, which you can find in the [directories section](https://pkg.go.dev/github.com/quii/pepper#pkg-examples) also have examples.
 
+You'll notice in the examples the following line:
+
+```go
+t := &SpyTB{}
+```
+
+This is a test spy that is used to verify the output of the matches made. The examples call `LastError()` to see what test output would happen, so you can see what the failures look like. 
+
 ## Trade-offs and optimisations
 
 ### Type-safety
