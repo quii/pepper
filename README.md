@@ -127,7 +127,7 @@ Here is the failing output
 
 Embracing this approach with well-written matchers means you get readable test failures for free. 
 
-Please note though that this library will not bend over backwards to write _perfect_ English. It's more important that the message is clear and concise, rather than grammatically perfect, and bringing in complexity to make the message perfect is not worth it.
+Please note though that this library will not bend over backwards to write _perfect_ English. It's important that the reason for test failure is clear, but perfect grammar is not needed for this; and the complexity cost involved to make matchers "write" different sentences depending on how they are used, is not worth it. 
 
 ## Benefits of matchers
 
