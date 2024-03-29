@@ -127,6 +127,8 @@ Here is the failing output
 
 Embracing this approach with well-written matchers means you get readable test failures for free. 
 
+Please note though that this library will not bend over backwards to write _perfect_ English. It's more important that the message is clear and concise, rather than grammatically perfect, and bringing in complexity to make the message perfect is not worth it.
+
 ## Benefits of matchers
 
 A lot of the time people zero-in on the "fluency" of matchers. Whilst it's true that the ease of use does make using matchers attractive, I think there's a larger, perhaps less obvious benefit. 
