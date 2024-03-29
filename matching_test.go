@@ -65,7 +65,7 @@ func TestMatching(t *testing.T) {
 			result2 := HaveAllCaps(someString)
 
 			expected := MatchResult{
-				Description: `have length be equal to 5 and be in all caps`,
+				Description: `have length be equal to 5 and in all caps`,
 				Matches:     false,
 				But:         "it was 7 and it was not in all caps",
 			}
@@ -80,7 +80,7 @@ func TestMatching(t *testing.T) {
 			result2 := HaveAllCaps(someString)
 
 			expected := MatchResult{
-				Description: `have length be equal to 5 and be in all caps`,
+				Description: `have length be equal to 5 and in all caps`,
 				Matches:     true,
 			}
 
@@ -94,7 +94,7 @@ func TestMatching(t *testing.T) {
 			result2 := HaveAllCaps(someString)
 
 			expected := MatchResult{
-				Description: `have length be equal to 5 and be in all caps`,
+				Description: `have length be equal to 5 and in all caps`,
 				Matches:     false,
 				But:         "it was not in all caps",
 			}
@@ -109,7 +109,7 @@ func TestMatching(t *testing.T) {
 			result2 := HaveAllCaps(someString)
 
 			expected := MatchResult{
-				Description: `have length be equal to 5 and be in all caps`,
+				Description: `have length be equal to 5 and in all caps`,
 				Matches:     false,
 				But:         "it was 7",
 			}

@@ -18,7 +18,7 @@ func HaveLength(matcher pepper.Matcher[int]) pepper.Matcher[string] {
 // HaveAllCaps will check if a string is in all caps.
 func HaveAllCaps(in string) pepper.MatchResult {
 	return pepper.MatchResult{
-		Description: "be in all caps",
+		Description: "in all caps",
 		Matches:     strings.ToUpper(in) == in,
 		But:         "it was not in all caps",
 	}

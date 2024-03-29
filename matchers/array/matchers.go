@@ -20,7 +20,7 @@ func ContainItem[T any](m pepper.Matcher[T]) pepper.Matcher[[]T] {
 			result := m(item)
 			if result.Matches {
 				return pepper.MatchResult{
-					Description: "contain item",
+					Description: "contain an item",
 					Matches:     true,
 				}
 			} else {
@@ -29,7 +29,7 @@ func ContainItem[T any](m pepper.Matcher[T]) pepper.Matcher[[]T] {
 		}
 
 		exampleFailure.But = "it did not"
-		exampleFailure.Description = "contain item " + exampleFailure.Description
+		exampleFailure.Description = "contain an item " + exampleFailure.Description
 
 		return exampleFailure
 	}

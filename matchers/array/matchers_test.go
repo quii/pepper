@@ -16,7 +16,7 @@ func ExampleContainItem() {
 	Expect(t, anArray).To(ContainItem(HaveAllCaps))
 
 	fmt.Println(t.LastError())
-	//Output: expected [hello world] to contain item be in all caps, but it did not
+	//Output: expected [hello world] to contain an item in all caps, but it did not
 }
 
 func ExampleHaveSize() {
@@ -51,7 +51,7 @@ func TestArrayMatchers(t *testing.T) {
 					t,
 					[]string{"hello", "world"},
 					ContainItem(EqualTo("goodbye")),
-					`expected [hello world] to contain item be equal to goodbye, but it did not`,
+					`expected [hello world] to contain an item be equal to goodbye, but it did not`,
 				)
 			})
 			t.Run("all caps", func(t *testing.T) {
@@ -59,7 +59,7 @@ func TestArrayMatchers(t *testing.T) {
 					t,
 					[]string{"hello", "world"},
 					ContainItem(HaveAllCaps),
-					`expected [hello world] to contain item be in all caps, but it did not`,
+					`expected [hello world] to contain an item in all caps, but it did not`,
 				)
 			})
 		})
