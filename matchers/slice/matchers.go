@@ -1,4 +1,4 @@
-package array
+package slice
 
 import (
 	"github.com/quii/pepper"
