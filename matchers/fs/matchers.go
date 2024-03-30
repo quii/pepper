@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"fmt"
 	"github.com/quii/pepper"
 	"io"
 	"io/fs"
@@ -38,6 +39,49 @@ func HaveFileCalled(name string, contentMatcher ...pepper.Matcher[string]) peppe
 
 		return pepper.MatchResult{
 			Description: "have file called " + name,
+			Matches:     true,
+			SubjectName: subjectName,
+		}
+	}
+}
+
+// HaveDir checks if a directory exists in the file system.
+func HaveDir(name string) pepper.Matcher[fs.FS] {
+	return func(fileSystem fs.FS) pepper.MatchResult {
+		f, err := fileSystem.Open(name)
+
+		description := fmt.Sprintf("have directory called %q", name)
+
+		if err != nil {
+			return pepper.MatchResult{
+				Description: description,
+				Matches:     false,
+				But:         "it did not",
+				SubjectName: subjectName,
+			}
+		}
+
+		stat, err := f.Stat()
+		if err != nil {
+			return pepper.MatchResult{
+				Description: description,
+				Matches:     false,
+				But:         "it could not be read",
+				SubjectName: subjectName,
+			}
+		}
+
+		if !stat.IsDir() {
+			return pepper.MatchResult{
+				Description: description,
+				Matches:     false,
+				But:         "it was not a directory",
+				SubjectName: subjectName,
+			}
+		}
+
+		return pepper.MatchResult{
+			Description: description,
 			Matches:     true,
 			SubjectName: subjectName,
 		}
