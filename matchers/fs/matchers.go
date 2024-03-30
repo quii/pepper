@@ -50,40 +50,31 @@ func HaveDir(name string) pepper.Matcher[fs.FS] {
 	return func(fileSystem fs.FS) pepper.MatchResult {
 		f, err := fileSystem.Open(name)
 
-		description := fmt.Sprintf("have directory called %q", name)
+		result := pepper.MatchResult{
+			Description: fmt.Sprintf("have directory called %q", name),
+			SubjectName: subjectName,
+			Matches:     true,
+		}
 
 		if err != nil {
-			return pepper.MatchResult{
-				Description: description,
-				Matches:     false,
-				But:         "it did not",
-				SubjectName: subjectName,
-			}
+			result.Matches = false
+			result.But = "it did not"
+			return result
 		}
 
 		stat, err := f.Stat()
 		if err != nil {
-			return pepper.MatchResult{
-				Description: description,
-				Matches:     false,
-				But:         "it could not be read",
-				SubjectName: subjectName,
-			}
+			result.Matches = false
+			result.But = "it could not be read"
+			return result
 		}
 
 		if !stat.IsDir() {
-			return pepper.MatchResult{
-				Description: description,
-				Matches:     false,
-				But:         "it was not a directory",
-				SubjectName: subjectName,
-			}
+			result.Matches = false
+			result.But = "it was not a directory"
+			return result
 		}
 
-		return pepper.MatchResult{
-			Description: description,
-			Matches:     true,
-			SubjectName: subjectName,
-		}
+		return result
 	}
 }

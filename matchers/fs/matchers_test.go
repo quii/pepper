@@ -38,6 +38,20 @@ func ExampleHaveDir() {
 	//Output:
 }
 
+func ExampleHaveDir_withErr() {
+	t := &SpyTB{}
+	stubFS := fstest.MapFS{
+		"someFile.txt": {
+			Data: []byte("hello world"),
+		},
+	}
+
+	Expect[fs.FS](t, stubFS).To(HaveDir("someFile.txt"))
+
+	fmt.Println(t.LastError())
+	//Output: expected file system to have directory called "someFile.txt", but it was not a directory
+}
+
 func TestFSMatching(t *testing.T) {
 	stubFS := fstest.MapFS{
 		"someFile.txt": {
@@ -62,6 +76,12 @@ func TestFSMatching(t *testing.T) {
 				stubFS,
 				HaveDir("someFile.txt"),
 				`expected file system to have directory called "someFile.txt", but it was not a directory`,
+			)
+			spytb.VerifyFailingMatcher[fs.FS](
+				t,
+				stubFS,
+				HaveDir("non-existent-file"),
+				`expected file system to have directory called "non-existent-file", but it did not`,
 			)
 		})
 	})
