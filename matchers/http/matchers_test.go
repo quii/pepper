@@ -26,12 +26,27 @@ func TestHTTPTestMatchers(t *testing.T) {
 
 		t.Run("simple string mismatch", func(t *testing.T) {
 			res := httptest.NewRecorder()
-			spyTB := &SpyTB{}
 
 			res.Body.WriteString("Hello, world")
 
-			Expect(spyTB, res.Result()).To(HaveBody(EqualTo("Goodbye, world")))
-			Expect(t, spyTB).To(HaveError("expected the response body to be equal to Goodbye, world, but it was Hello, world"))
+			VerifyFailingMatcher(
+				t,
+				res.Result(),
+				HaveBody(EqualTo("Goodbye, world")),
+				"expected the response body to be equal to Goodbye, world, but it was Hello, world",
+			)
+		})
+
+		t.Run("failing to read body", func(t *testing.T) {
+			res := httptest.NewRecorder().Result()
+			res.Body = FailingIOReadCloser{Error: fmt.Errorf("oops")}
+
+			VerifyFailingMatcher(
+				t,
+				res,
+				HaveBody(EqualTo("Goodbye, world")),
+				"expected the response body to have a body, but it could not be read",
+			)
 		})
 
 		t.Run("example of matching JSON", func(t *testing.T) {
@@ -70,11 +85,14 @@ func TestHTTPTestMatchers(t *testing.T) {
 
 			t.Run("with incomplete todo", func(t *testing.T) {
 				res := httptest.NewRecorder()
-				spyTB := &SpyTB{}
-
 				res.Body.WriteString(`{"name": "Finish the side project", "completed": false}`)
-				Expect(spyTB, res.Result()).To(HaveBody(WithCompletedTODO))
-				Expect(t, spyTB).To(HaveError("expected the response body to have a completed todo, but it wasn't complete"))
+
+				VerifyFailingMatcher(
+					t,
+					res.Result(),
+					HaveBody(WithCompletedTODO),
+					"expected the response body to have a completed todo, but it wasn't complete",
+				)
 			})
 
 			t.Run("with a todo name", func(t *testing.T) {
@@ -85,24 +103,25 @@ func TestHTTPTestMatchers(t *testing.T) {
 
 			t.Run("with incorrect todo name and not completed", func(t *testing.T) {
 				res := httptest.NewRecorder()
-				spyTB := &SpyTB{}
-
 				res.Body.WriteString(`{"name": "Egg", "completed": false}`)
-				//todo: use the VerifyError function thing instead
-				Expect(spyTB, res.Result()).To(HaveBody(WithTodoNameOf("Bacon").And(WithCompletedTODO)))
-				Expect(t, spyTB).To(
-					HaveError(`expected the response body to have a todo name of "Bacon" and have a completed todo, but it was "Egg" and it wasn't complete`),
+
+				VerifyFailingMatcher(
+					t,
+					res.Result(),
+					HaveBody(WithTodoNameOf("Bacon").And(WithCompletedTODO)),
+					`expected the response body to have a todo name of "Bacon" and have a completed todo, but it was "Egg" and it wasn't complete`,
 				)
 			})
 
 			t.Run("with incorrect todo name", func(t *testing.T) {
 				res := httptest.NewRecorder()
-				spyTB := &SpyTB{}
-
 				res.Body.WriteString(`{"name": "Egg", "completed": false}`)
-				Expect(spyTB, res.Result()).To(HaveBody(WithTodoNameOf("Bacon")))
-				Expect(t, spyTB).To(
-					HaveError(`expected the response body to have a todo name of "Bacon", but it was "Egg"`),
+
+				VerifyFailingMatcher(
+					t,
+					res.Result(),
+					HaveBody(WithTodoNameOf("Bacon")),
+					`expected the response body to have a todo name of "Bacon", but it was "Egg"`,
 				)
 			})
 
@@ -193,4 +212,16 @@ func TestHTTPTestMatchers(t *testing.T) {
 			)
 		})
 	})
+}
+
+type FailingIOReadCloser struct {
+	Error error
+}
+
+func (f FailingIOReadCloser) Read(p []byte) (n int, err error) {
+	return 0, f.Error
+}
+
+func (f FailingIOReadCloser) Close() error {
+	return nil
 }
