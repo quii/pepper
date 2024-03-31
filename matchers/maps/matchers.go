@@ -8,26 +8,15 @@ import (
 // HaveKey checks if a map has a key with a specific value.
 func HaveKey[K comparable, V any](key K, valueMatcher pepper.Matcher[V]) pepper.Matcher[map[K]V] {
 	return func(m map[K]V) pepper.MatchResult {
-		if value, ok := m[key]; ok {
-			result := valueMatcher(value)
-			if !result.Matches {
-				return pepper.MatchResult{
-					Description: fmt.Sprintf("have key %v with value %v", key, result.Description),
-					Matches:     false,
-					But:         result.But,
-				}
-			}
+		value, exists := m[key]
 
-			return pepper.MatchResult{
-				Matches: true,
-			}
+		if !exists {
+			return missingKeyResult(key)
 		}
 
-		return pepper.MatchResult{
-			Description: fmt.Sprintf("have key %v", key),
-			Matches:     false,
-			But:         "it did not",
-		}
+		result := valueMatcher(value)
+		result.Description = fmt.Sprintf("have key %v with value %v", key, result.Description)
+		return result
 	}
 }
 
@@ -37,5 +26,13 @@ func WithAnyValue[T any]() pepper.Matcher[T] {
 		return pepper.MatchResult{
 			Matches: true,
 		}
+	}
+}
+
+func missingKeyResult[K any](key K) pepper.MatchResult {
+	return pepper.MatchResult{
+		Description: fmt.Sprintf("have key %v", key),
+		Matches:     false,
+		But:         "it did not",
 	}
 }
