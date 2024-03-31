@@ -88,6 +88,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				spyTB := &SpyTB{}
 
 				res.Body.WriteString(`{"name": "Egg", "completed": false}`)
+				//todo: use the VerifyError function thing instead
 				Expect(spyTB, res.Result()).To(HaveBody(WithTodoNameOf("Bacon").And(WithCompletedTODO)))
 				Expect(t, spyTB).To(
 					HaveError(`expected the response body to have a todo name of "Bacon" and have a completed todo, but it was "Egg" and it wasn't complete`),

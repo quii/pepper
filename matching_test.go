@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func ExampleExpecter_To() {
+func ExampleInspector_To() {
 	t := &SpyTB{}
 	Expect(t, "Pepper").To(EqualTo("Stanley"))
 	fmt.Println(t.LastError())
