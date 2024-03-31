@@ -83,6 +83,15 @@ func TestFSMatching(t *testing.T) {
 				HaveDir("non-existent-file"),
 				`expected file system to have directory called "non-existent-file", but it did not`,
 			)
+			t.Run("failing filesystem", func(t *testing.T) {
+				failingFS := FailToReadFS{Error: fmt.Errorf("could not read file")}
+				spytb.VerifyFailingMatcher[fs.FS](
+					t,
+					failingFS,
+					HaveDir("someDir"),
+					`expected file system to have directory called "someDir", but it could not be read`,
+				)
+			})
 		})
 	})
 
@@ -91,6 +100,14 @@ func TestFSMatching(t *testing.T) {
 			t.Run("passing", func(t *testing.T) {
 				Expect[fs.FS](t, stubFS).To(HaveFileCalled("someFile.txt"))
 				Expect[fs.FS](t, stubFS).To(HaveFileCalled("nested/someFile.txt"))
+			})
+			t.Run("failing", func(t *testing.T) {
+				spytb.VerifyFailingMatcher[fs.FS](
+					t,
+					stubFS,
+					HaveFileCalled("non-existent-file"),
+					`expected file system to have file called non-existent-file, but it did not`,
+				)
 			})
 		})
 	})
@@ -108,7 +125,7 @@ func TestFSMatching(t *testing.T) {
 				`expected file called someFile.txt to contain "goodbye"`,
 			)
 
-			t.Run("failing", func(t *testing.T) {
+			t.Run("failing filesystem", func(t *testing.T) {
 				failingFS := FailToReadFS{Error: fmt.Errorf("could not read file")}
 				spytb.VerifyFailingMatcher[fs.FS](
 					t,
