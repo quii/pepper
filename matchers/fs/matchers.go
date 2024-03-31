@@ -26,7 +26,15 @@ func HaveFileCalled(name string, contentMatcher ...pepper.Matcher[string]) peppe
 		defer file.Close()
 
 		if len(contentMatcher) > 0 {
-			all, _ := io.ReadAll(file)
+			all, err := io.ReadAll(file)
+			if err != nil {
+				return pepper.MatchResult{
+					Description: "have file called " + name,
+					Matches:     false,
+					But:         "it could not be read",
+					SubjectName: subjectName,
+				}
+			}
 			contents := string(all)
 			for _, matcher := range contentMatcher {
 				result := matcher(contents)

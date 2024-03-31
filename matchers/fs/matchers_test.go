@@ -92,15 +92,6 @@ func TestFSMatching(t *testing.T) {
 				Expect[fs.FS](t, stubFS).To(HaveFileCalled("someFile.txt"))
 				Expect[fs.FS](t, stubFS).To(HaveFileCalled("nested/someFile.txt"))
 			})
-
-			t.Run("failing", func(t *testing.T) {
-				spytb.VerifyFailingMatcher[fs.FS](
-					t,
-					stubFS,
-					HaveFileCalled("anotherFile.txt"),
-					"expected file system to have file called anotherFile.txt, but it did not",
-				)
-			})
 		})
 	})
 
@@ -116,6 +107,40 @@ func TestFSMatching(t *testing.T) {
 				HaveFileCalled("someFile.txt", HaveSubstring("goodbye")),
 				`expected file called someFile.txt to contain "goodbye"`,
 			)
+
+			t.Run("failing", func(t *testing.T) {
+				failingFS := FailToReadFS{Error: fmt.Errorf("could not read file")}
+				spytb.VerifyFailingMatcher[fs.FS](
+					t,
+					failingFS,
+					HaveFileCalled("anotherFile.txt", HaveSubstring("BLAH")),
+					"expected file system to have file called anotherFile.txt, but it could not be read",
+				)
+			})
 		})
 	})
+}
+
+type FailToReadFS struct {
+	Error error
+}
+
+func (f FailToReadFS) Open(name string) (fs.File, error) {
+	return FailingFile(f), nil
+}
+
+type FailingFile struct {
+	Error error
+}
+
+func (f FailingFile) Stat() (fs.FileInfo, error) {
+	return nil, f.Error
+}
+
+func (f FailingFile) Read(bytes []byte) (int, error) {
+	return 0, f.Error
+}
+
+func (f FailingFile) Close() error {
+	return f.Error
 }
