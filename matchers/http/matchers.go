@@ -7,6 +7,11 @@ import (
 	"net/http"
 )
 
+const (
+	subjectName             = "the response"
+	responseBodySubjectName = subjectName + " body"
+)
+
 // HaveStatus returns a matcher that checks if the response status code is equal to the given status code.
 func HaveStatus(status int) pepper.Matcher[*http.Response] {
 	return func(res *http.Response) pepper.MatchResult {
@@ -14,7 +19,7 @@ func HaveStatus(status int) pepper.Matcher[*http.Response] {
 			Description: fmt.Sprintf("have status of %d", status),
 			But:         fmt.Sprintf("it was %d", res.StatusCode),
 			Matches:     res.StatusCode == status,
-			SubjectName: "the response",
+			SubjectName: subjectName,
 		}
 	}
 }
@@ -31,7 +36,7 @@ func HaveHeader(header, value string) pepper.Matcher[*http.Response] {
 			Description: fmt.Sprintf("have header %q of %q", header, value),
 			Matches:     res.Header.Get(header) == value,
 			But:         fmt.Sprintf("it was %q", res.Header.Get(header)),
-			SubjectName: "the response",
+			SubjectName: subjectName,
 		}
 	}
 }
@@ -41,12 +46,20 @@ func HaveJSONHeader(res *http.Response) pepper.MatchResult {
 	return HaveHeader("content-type", "application/json")(res)
 }
 
-// HaveBody returns a matcher that checks if the response body meets the given matchers' criteria.
+// HaveBody returns a matcher that checks if the response body meets the given matchers' criteria. Note this will read the entire body using io.ReadAll.
 func HaveBody(bodyMatchers pepper.Matcher[string]) pepper.Matcher[*http.Response] {
 	return func(res *http.Response) pepper.MatchResult {
-		body, _ := io.ReadAll(res.Body)
+		body, err := io.ReadAll(res.Body)
+		if err != nil {
+			return pepper.MatchResult{
+				Description: "have a body",
+				Matches:     false,
+				But:         "it could not be read",
+				SubjectName: responseBodySubjectName,
+			}
+		}
 		result := bodyMatchers(string(body))
-		result.SubjectName = "the response body"
+		result.SubjectName = responseBodySubjectName
 		return result
 	}
 }
