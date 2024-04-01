@@ -1,6 +1,7 @@
 package pepper_test
 
 import (
+	"errors"
 	"fmt"
 	. "github.com/quii/pepper"
 	. "github.com/quii/pepper/matchers/comparable"
@@ -46,6 +47,48 @@ func ExampleMatcher_And() {
 	))
 	fmt.Println(t.LastError())
 	//Output: expected Player Chris to score be greater than 5 and be less than 10, but it was 11
+}
+
+func ExampleExpectNoError() {
+	t := &SpyTB{}
+
+	err := errors.New("oh no")
+
+	ExpectNoError(t, err)
+	fmt.Println(t.LastError())
+	//Output: unexpected error: oh no
+}
+
+func ExampleExpectError() {
+	t := &SpyTB{}
+
+	err := errors.New("oh no")
+
+	ExpectError(t, err)
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleExpectErrorOfType() {
+	t := &SpyTB{}
+
+	unauthorised := errors.New("unauthorised")
+	wrappedErr := fmt.Errorf("oh no: %w", unauthorised)
+
+	ExpectErrorOfType(t, wrappedErr, unauthorised)
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleExpectErrorOfType_failing() {
+	t := &SpyTB{}
+
+	unauthorised := errors.New("unauthorised")
+	wrappedErr := fmt.Errorf("oh no: %w", unauthorised)
+
+	ExpectErrorOfType(t, wrappedErr, errors.New("not found"))
+	fmt.Println(t.LastError())
+	//Output: expected error of type *errors.errorString, but got "oh no: unauthorised"
 }
 
 func ExampleAct() {

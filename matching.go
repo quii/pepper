@@ -44,7 +44,7 @@ func ExpectError(t TB, err error) {
 func ExpectErrorOfType(t TB, err error, expectedType error) {
 	t.Helper()
 	if !errors.Is(err, expectedType) {
-		t.Fatalf("expected error of type %T, but got %T", expectedType, err)
+		t.Fatalf("expected error of type %T, but got %q", expectedType, err.Error())
 	}
 }
 
