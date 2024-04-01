@@ -1,6 +1,9 @@
 package pepper
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type (
 	// TB is a cut-down version of testing.TB.
@@ -34,6 +37,14 @@ func ExpectError(t TB, err error) {
 	t.Helper()
 	if err == nil {
 		t.Fatalf("expected an error")
+	}
+}
+
+// ExpectErrorOfType is a helper function that will call t.Fatalf if the error is not of the expected type.
+func ExpectErrorOfType(t TB, err error, expectedType error) {
+	t.Helper()
+	if !errors.Is(err, expectedType) {
+		t.Fatalf("expected error of type %T, but got %T", expectedType, err)
 	}
 }
 
