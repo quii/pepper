@@ -48,6 +48,19 @@ func ExampleMatcher_And() {
 	//Output: expected Player Chris to score be greater than 5 and be less than 10, but it was 11
 }
 
+func ExampleAct() {
+	t := &SpyTB{}
+
+	// Often we want to test functions that return a value and an error, Act is a helper to make this easier
+	subject := func() (string, error) {
+		return "hello", nil
+	}
+
+	Act(t, subject).AndAssertSubject(EqualTo("hello"))
+	fmt.Println(t.LastError())
+	//Output:
+}
+
 func TestMatching(t *testing.T) {
 	t.Run("passing example", func(t *testing.T) {
 		Expect(t, "hello").To(

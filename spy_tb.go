@@ -30,6 +30,10 @@ func (s *SpyTB) Errorf(format string, args ...any) {
 	s.ErrorCalls = append(s.ErrorCalls, fmt.Sprintf(format, args...))
 }
 
+func (s *SpyTB) Fatalf(format string, args ...any) {
+	s.ErrorCalls = append(s.ErrorCalls, fmt.Sprintf(format, args...))
+}
+
 func (s *SpyTB) Reset() {
 	s.ErrorCalls = nil
 }
