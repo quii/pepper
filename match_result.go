@@ -1,11 +1,20 @@
 package pepper
 
+import "fmt"
+
 // MatchResult describes the result of a match against a "subject".
 type MatchResult struct {
 	Description string
 	Matches     bool
 	But         string
 	SubjectName string
+}
+
+func (m MatchResult) Error() string {
+	if m.But != "" {
+		return fmt.Sprintf("expected %+v to %+v, but %s", m.SubjectName, m.Description, m.But)
+	}
+	return fmt.Sprintf("expected %+v to %+v", m.SubjectName, m.Description)
 }
 
 // Zero returns true if the MatchResult is the zero value.

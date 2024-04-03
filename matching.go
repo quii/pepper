@@ -63,19 +63,13 @@ func (e Inspector[T]) To(matchers ...Matcher[T]) {
 	e.t.Helper()
 	for _, matcher := range matchers {
 		result := matcher(e.Subject)
+
 		if result.SubjectName == "" {
-			if str, isStringer := any(e.Subject).(fmt.Stringer); isStringer {
-				result.SubjectName = str.String()
-			} else {
-				result.SubjectName = fmt.Sprintf("%v", e.Subject)
-			}
+			result.SubjectName = calculateSubjectName(e)
 		}
+
 		if !result.Matches {
-			if result.But != "" {
-				e.t.Errorf("expected %+v to %+v, but %s", result.SubjectName, result.Description, result.But)
-			} else {
-				e.t.Errorf("expected %+v to %+v", result.SubjectName, result.Description)
-			}
+			e.t.Error(result.Error())
 		}
 	}
 }
@@ -83,4 +77,13 @@ func (e Inspector[T]) To(matchers ...Matcher[T]) {
 func (e Inspector[T]) AndAssertSubject(matchers ...Matcher[T]) Inspector[T] {
 	e.To(matchers...)
 	return e
+}
+
+func calculateSubjectName[T any](e Inspector[T]) string {
+	var subjectName = fmt.Sprintf("%v", e.Subject)
+
+	if str, isStringer := any(e.Subject).(fmt.Stringer); isStringer {
+		subjectName = str.String()
+	}
+	return subjectName
 }
