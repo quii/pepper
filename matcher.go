@@ -26,8 +26,7 @@ func (m Matcher[T]) Or(matchers ...Matcher[T]) Matcher[T] {
 		}
 
 		for _, matcher := range matchers {
-			r := matcher(got)
-			if r.Matches {
+			if r := matcher(got); r.Matches {
 				result.Matches = true
 				return result
 			}
