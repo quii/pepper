@@ -10,7 +10,7 @@ import (
 	"testing/fstest"
 )
 
-func ExampleHaveFileCalled() {
+func ExampleHaveFileCalled_fail() {
 	t := &SpyTB{}
 	stubFS := fstest.MapFS{
 		"someFile.txt": {
@@ -22,6 +22,20 @@ func ExampleHaveFileCalled() {
 
 	fmt.Println(t.LastError())
 	//Output: expected file called someFile.txt to contain "Pluto"
+}
+
+func ExampleHaveFileCalled() {
+	t := &SpyTB{}
+	stubFS := fstest.MapFS{
+		"someFile.txt": {
+			Data: []byte("hello world"),
+		},
+	}
+
+	Expect[fs.FS](t, stubFS).To(HaveFileCalled("someFile.txt"))
+
+	fmt.Println(t.LastError())
+	//Output:
 }
 
 func ExampleHaveDir() {
@@ -38,7 +52,7 @@ func ExampleHaveDir() {
 	//Output:
 }
 
-func ExampleHaveDir_withErr() {
+func ExampleHaveDir_fail() {
 	t := &SpyTB{}
 	stubFS := fstest.MapFS{
 		"someFile.txt": {

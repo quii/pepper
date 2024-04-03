@@ -9,6 +9,13 @@ import (
 
 func ExampleEqualTo() {
 	t := &SpyTB{}
+	Expect(t, 5).To(EqualTo(5))
+	fmt.Println(t.LastError())
+	// Output:
+}
+
+func ExampleEqualTo_fail() {
+	t := &SpyTB{}
 	Expect(t, 5).To(EqualTo(4))
 	fmt.Println(t.LastError())
 	// Output: expected 5 to be equal to 4, but it was 5
@@ -16,12 +23,26 @@ func ExampleEqualTo() {
 
 func ExampleGreaterThan() {
 	t := &SpyTB{}
+	Expect(t, 5).To(GreaterThan(4))
+	fmt.Println(t.LastError())
+	// Output:
+}
+
+func ExampleGreaterThan_fail() {
+	t := &SpyTB{}
 	Expect(t, 5).To(GreaterThan(6))
 	fmt.Println(t.LastError())
 	// Output: expected 5 to be greater than 6, but it was 5
 }
 
 func ExampleLessThan() {
+	t := &SpyTB{}
+	Expect(t, 5).To(LessThan(6))
+	fmt.Println(t.LastError())
+	// Output:
+}
+
+func ExampleLessThan_fail() {
 	t := &SpyTB{}
 	Expect(t, 5).To(LessThan(4))
 	fmt.Println(t.LastError())

@@ -8,6 +8,60 @@ import (
 	"testing"
 )
 
+func ExampleHaveAllCaps() {
+	t := &SpyTB{}
+
+	Expect(t, "HELLO").To(HaveAllCaps)
+
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleHaveAllCaps_fail() {
+	t := &SpyTB{}
+
+	Expect(t, "hello").To(HaveAllCaps)
+
+	fmt.Println(t.LastError())
+	//Output: expected hello to in all caps, but it was not in all caps
+}
+
+func ExampleHaveLength() {
+	t := &SpyTB{}
+
+	Expect(t, "hello").To(HaveLength(EqualTo(5)))
+
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleHaveLength_fail() {
+	t := &SpyTB{}
+
+	Expect(t, "hello").To(HaveLength(EqualTo(4)))
+
+	fmt.Println(t.LastError())
+	//Output: expected hello to have length be equal to 4, but it was 5
+}
+
+func ExampleHaveSubstring() {
+	t := &SpyTB{}
+
+	Expect(t, "hello").To(HaveSubstring("ell"))
+
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleHaveSubstring_fail() {
+	t := &SpyTB{}
+
+	Expect(t, "hello").To(HaveSubstring("goodbye"))
+
+	fmt.Println(t.LastError())
+	//Output: expected hello to contain "goodbye"
+}
+
 func Example() {
 	t := &SpyTB{}
 
@@ -18,7 +72,7 @@ func Example() {
 		Doesnt(HaveAllCaps),
 	)
 
-	fmt.Println(t.LastError()) // no error calls means it passed
+	fmt.Println(t.LastError())
 	//Output:
 }
 func TestStringMatchers(t *testing.T) {
