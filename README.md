@@ -230,7 +230,7 @@ func HaveSize[T any](matcher pepper.Matcher[int]) pepper.Matcher[[]T] {
 
 This way, users can use this matcher in different ways, like checking if a slice has a size `LessThan(5)` or `GreaterThan(3)`.
 
-With this simple change, users can leverage the _other composition tools like `And`:
+With this simple change, users can leverage the _other_ composition tools like `And`:
 
 ```go
 Expect(t, catsInAHotel).To(HaveSize(GreaterThan(3).And(LessThan(10))))
