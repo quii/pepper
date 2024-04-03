@@ -270,3 +270,13 @@ func TestComparisonMatchers(t *testing.T) {
 	})
 }
 ```
+
+### Contributing your own matchers
+
+If you have a matcher you think would be useful to others, please consider contributing it to this library. Your PR will need the following
+
+- At least two [testable examples](https://go.dev/blog/examples), one showing the matcher passing (with an empty output) and one showing the matcher failing with the expected failing output. This will help users understand how to use your matcher. 
+- Automated tests in general
+- Go doc comments for the matcher
+
+As discussed above, try to keep them "open" in terms of their design, so they can be composed with other matchers. 
