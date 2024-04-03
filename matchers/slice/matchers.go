@@ -7,7 +7,9 @@ import (
 // HaveSize checks if an array's size meets a matcher's criteria.
 func HaveSize[T any](matcher pepper.Matcher[int]) pepper.Matcher[[]T] {
 	return func(items []T) pepper.MatchResult {
-		return matcher(len(items))
+		result := matcher(len(items))
+		result.Description = "have a size " + result.Description
+		return result
 	}
 }
 

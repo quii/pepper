@@ -12,6 +12,16 @@ import (
 func ExampleContainItem() {
 	t := &SpyTB{}
 
+	anArray := []string{"HELLO", "WORLD"}
+	Expect(t, anArray).To(ContainItem(HaveAllCaps))
+
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleContainItem_fail() {
+	t := &SpyTB{}
+
 	anArray := []string{"hello", "world"}
 	Expect(t, anArray).To(ContainItem(HaveAllCaps))
 
@@ -29,7 +39,27 @@ func ExampleHaveSize() {
 	//Output:
 }
 
+func ExampleHaveSize_fail() {
+	t := &SpyTB{}
+
+	anArray := []string{"hello", "world"}
+	Expect(t, anArray).To(HaveSize[string](EqualTo(3)))
+
+	fmt.Println(t.LastError())
+	//Output: expected [hello world] to have a size be equal to 3, but it was 2
+}
+
 func ExampleEveryItem() {
+	t := &SpyTB{}
+
+	anArray := []string{"hello", "world"}
+	Expect(t, anArray).To(EveryItem(HaveSubstring("o")))
+
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleEveryItem_fail() {
 	t := &SpyTB{}
 
 	anArray := []string{"hello", "world"}
