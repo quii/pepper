@@ -23,7 +23,35 @@ func ExampleContainingByte() {
 	//Output:
 }
 
+func ExampleContainingByte_fail() {
+	t := &SpyTB{}
+
+	buf := &bytes.Buffer{}
+	buf.WriteString("hello")
+	buf.WriteString("world")
+
+	Expect[io.Reader](t, buf).To(HaveData(
+		ContainingByte([]byte("goodbye")),
+	))
+	fmt.Println(t.LastError())
+	//Output: expected the reader to contain "goodbye", but it didn't have "goodbye"
+}
+
 func ExampleContainingString() {
+	t := &SpyTB{}
+
+	buf := &bytes.Buffer{}
+	buf.WriteString("hello")
+	buf.WriteString("world")
+
+	Expect[io.Reader](t, buf).To(HaveData(
+		ContainingString("world"),
+	))
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleContainingString_fail() {
 	t := &SpyTB{}
 
 	buf := &bytes.Buffer{}
