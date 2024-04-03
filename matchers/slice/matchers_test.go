@@ -9,6 +9,26 @@ import (
 	"testing"
 )
 
+func ExampleShallowEquals() {
+	t := &SpyTB{}
+
+	anArray := []string{"hello", "world"}
+	Expect(t, anArray).To(ShallowEquals([]string{"hello", "world"}))
+
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleShallowEquals_fail() {
+	t := &SpyTB{}
+
+	anArray := []string{"hello", "world"}
+	Expect(t, anArray).To(ShallowEquals([]string{"goodbye", "world"}))
+
+	fmt.Println(t.LastError())
+	//Output: expected [hello world] to be equal to [goodbye world]
+}
+
 func ExampleContainItem() {
 	t := &SpyTB{}
 

@@ -1,8 +1,14 @@
 package slice
 
 import (
+	"fmt"
 	"github.com/quii/pepper"
+	"slices"
 )
+
+var passingResult = pepper.MatchResult{
+	Matches: true,
+}
 
 // HaveSize checks if an array's size meets a matcher's criteria.
 func HaveSize[T any](matcher pepper.Matcher[int]) pepper.Matcher[[]T] {
@@ -41,18 +47,29 @@ func ContainItem[T any](m pepper.Matcher[T]) pepper.Matcher[[]T] {
 func EveryItem[T any](m pepper.Matcher[T]) pepper.Matcher[[]T] {
 	return func(items []T) pepper.MatchResult {
 		for _, item := range items {
-			result := m(item)
-			if !result.Matches {
-				return pepper.MatchResult{
-					Description: "have every item " + result.Description,
-					Matches:     false,
-					But:         result.But,
-				}
+			if result := m(item); !result.Matches {
+				return everyItemFailure(result)
 			}
 		}
 
+		return passingResult
+	}
+}
+
+// ShallowEquals checks if two slices are equal, only works with slices of comparable types.
+func ShallowEquals[T comparable](other []T) pepper.Matcher[[]T] {
+	return func(ts []T) pepper.MatchResult {
 		return pepper.MatchResult{
-			Matches: true,
+			Matches:     slices.Equal(ts, other),
+			Description: fmt.Sprintf("be equal to %v", other),
 		}
+	}
+}
+
+func everyItemFailure(result pepper.MatchResult) pepper.MatchResult {
+	return pepper.MatchResult{
+		Description: "have every item " + result.Description,
+		Matches:     false,
+		But:         result.But,
 	}
 }
