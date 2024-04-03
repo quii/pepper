@@ -13,6 +13,125 @@ import (
 	"time"
 )
 
+func ExampleBeOK() {
+	t := &SpyTB{}
+	res := httptest.NewRecorder()
+	res.WriteHeader(http.StatusOK)
+
+	Expect(t, res.Result()).To(BeOK)
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleBeOK_fail() {
+	t := &SpyTB{}
+	res := httptest.NewRecorder()
+	res.WriteHeader(http.StatusNotFound)
+
+	Expect(t, res.Result()).To(BeOK)
+	fmt.Println(t.LastError())
+	//Output: expected the response to have status of 200, but it was 404
+}
+
+func ExampleHaveBody() {
+	t := &SpyTB{}
+	res := httptest.NewRecorder()
+	res.Body.WriteString("Hello, world")
+
+	Expect(t, res.Result()).To(HaveBody(EqualTo("Hello, world")))
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleHaveBody_fail() {
+	t := &SpyTB{}
+	res := httptest.NewRecorder()
+	res.Body.WriteString("Hello, world")
+
+	Expect(t, res.Result()).To(HaveBody(EqualTo("Goodbye, world")))
+	fmt.Println(t.LastError())
+	//Output: expected the response body to be equal to Goodbye, world, but it was Hello, world
+}
+
+func ExampleHaveHeader() {
+	t := &SpyTB{}
+	res := httptest.NewRecorder()
+	res.Header().Add("Content-Type", "text/html")
+
+	Expect(t, res.Result()).To(HaveHeader("Content-Type", "text/html"))
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleHaveJSONHeader() {
+	t := &SpyTB{}
+	res := httptest.NewRecorder()
+	res.Header().Add("Content-Type", "application/json")
+
+	Expect(t, res.Result()).To(HaveJSONHeader)
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleHaveHeader_multiple() {
+	t := &SpyTB{}
+	res := httptest.NewRecorder()
+	res.Header().Add("Content-Encoding", "gzip")
+	res.Header().Add("Content-Type", "text/html")
+
+	Expect(t, res.Result()).To(
+		HaveHeader("Content-Encoding", "gzip"),
+		HaveHeader("Content-Type", "text/html"),
+	)
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleHaveHeader_multiple_fail() {
+	t := &SpyTB{}
+	res := httptest.NewRecorder()
+	res.Header().Add("Content-Type", "text/xml")
+
+	Expect(t, res.Result()).To(
+		HaveHeader("Content-Encoding", "gzip"),
+		HaveHeader("Content-Type", "text/html"),
+	)
+	fmt.Println(t.ErrorCalls[0])
+	fmt.Println(t.ErrorCalls[1])
+	//Output: expected the response to have header "Content-Encoding" of "gzip", but it was ""
+	// expected the response to have header "Content-Type" of "text/html", but it was "text/xml"
+}
+
+func ExampleHaveStatus() {
+	t := &SpyTB{}
+	res := httptest.NewRecorder()
+	res.WriteHeader(http.StatusTeapot)
+
+	Expect(t, res.Result()).To(HaveStatus(http.StatusTeapot))
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleHaveStatus_fail() {
+	t := &SpyTB{}
+	res := httptest.NewRecorder()
+	res.WriteHeader(http.StatusTeapot)
+
+	Expect(t, res.Result()).To(HaveStatus(http.StatusNotFound))
+	fmt.Println(t.LastError())
+	//Output: expected the response to have status of 404, but it was 418
+}
+
+func ExampleHaveHeader_fail() {
+	t := &SpyTB{}
+	res := httptest.NewRecorder()
+	res.Header().Add("Content-Type", "text/xml")
+
+	Expect(t, res.Result()).To(HaveHeader("Content-Type", "text/html"))
+	fmt.Println(t.LastError())
+	//Output: expected the response to have header "Content-Type" of "text/html", but it was "text/xml"
+}
+
 func TestHTTPTestMatchers(t *testing.T) {
 	t.Run("Body matching", func(t *testing.T) {
 		t.Run("simple string match", func(t *testing.T) {
