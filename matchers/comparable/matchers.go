@@ -17,6 +17,11 @@ func EqualTo[T comparable](in T) pepper.Matcher[T] {
 	}
 }
 
+// Equal is an alias for EqualTo.
+func Equal[T comparable](in T) pepper.Matcher[T] {
+	return EqualTo(in)
+}
+
 // LessThan checks if a value is less than another value.
 func LessThan[T cmp.Ordered](in T) pepper.Matcher[T] {
 	return func(got T) pepper.MatchResult {
