@@ -58,7 +58,7 @@ func TestMapMatching(t *testing.T) {
 				t,
 				map[string]string{"hello": "world"},
 				HaveKey("hello", EqualTo("goodbye")),
-				`expected map[hello:world] to have key hello with value be equal to goodbye, but it was world`,
+				`expected map[hello:world] to have key hello with value be equal to "goodbye", but it was "world"`,
 			)
 		})
 	})

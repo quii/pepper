@@ -85,4 +85,15 @@ func TestComparisonMatchers(t *testing.T) {
 			spytb.VerifyFailingMatcher(t, 2, GreaterThan(10), "expected 2 to be greater than 10, but it was 2")
 		})
 	})
+
+	t.Run("equal to with empty strings", func(t *testing.T) {
+		t.Run("when it is an empty string, failing output should be quoted", func(t *testing.T) {
+			spytb.VerifyFailingMatcher(
+				t,
+				"",
+				EqualTo("Bob"),
+				`expected "" to be equal to "Bob", but it was ""`,
+			)
+		})
+	})
 }

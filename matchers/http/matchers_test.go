@@ -50,7 +50,7 @@ func ExampleHaveBody_fail() {
 
 	Expect(t, res.Result()).To(HaveBody(EqualTo("Goodbye, world")))
 	fmt.Println(t.LastError())
-	//Output: expected the response body to be equal to Goodbye, world, but it was Hello, world
+	//Output: expected the response body to be equal to "Goodbye, world", but it was "Hello, world"
 }
 
 func ExampleHaveHeader() {
@@ -152,7 +152,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				t,
 				res.Result(),
 				HaveBody(EqualTo("Goodbye, world")),
-				"expected the response body to be equal to Goodbye, world, but it was Hello, world",
+				`expected the response body to be equal to "Goodbye, world", but it was "Hello, world"`,
 			)
 		})
 

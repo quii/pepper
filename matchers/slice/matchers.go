@@ -38,6 +38,7 @@ func ContainItem[T any](m pepper.Matcher[T]) pepper.Matcher[[]T] {
 
 		exampleFailure.But = "it did not"
 		exampleFailure.Description = "contain an item " + exampleFailure.Description
+		exampleFailure.SubjectName = fmt.Sprintf("%+v", items)
 
 		return exampleFailure
 	}

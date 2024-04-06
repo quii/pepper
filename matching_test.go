@@ -13,7 +13,7 @@ func ExampleInspector_To() {
 	t := &SpyTB{}
 	Expect(t, "Pepper").To(EqualTo("Stanley"))
 	fmt.Println(t.LastError())
-	//Output: expected Pepper to be equal to Stanley, but it was Pepper
+	//Output: expected "Pepper" to be equal to "Stanley", but it was "Pepper"
 }
 
 func ExampleMatcher_Or() {

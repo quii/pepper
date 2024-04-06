@@ -101,7 +101,7 @@ func TestArrayMatchers(t *testing.T) {
 					t,
 					[]string{"hello", "world"},
 					ContainItem(EqualTo("goodbye")),
-					`expected [hello world] to contain an item be equal to goodbye, but it did not`,
+					`expected [hello world] to contain an item be equal to "goodbye", but it did not`,
 				)
 			})
 			t.Run("all caps", func(t *testing.T) {

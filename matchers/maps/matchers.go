@@ -16,6 +16,7 @@ func HaveKey[K comparable, V any](key K, valueMatcher pepper.Matcher[V]) pepper.
 
 		result := valueMatcher(value)
 		result.Description = fmt.Sprintf("have key %v with value %v", key, result.Description)
+		result.SubjectName = fmt.Sprintf("%+v", m)
 		return result
 	}
 }
