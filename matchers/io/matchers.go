@@ -26,7 +26,7 @@ func ContainingString(want string) pepper.Matcher[[]byte] {
 			Description: fmt.Sprintf("contain %q", want),
 			Matches:     bytes.Contains(have, []byte(want)),
 			SubjectName: "the reader",
-			But:         fmt.Sprintf("it didn't have %q", want),
+			But:         fmt.Sprintf("it was %q", have),
 		}
 	}
 }
@@ -43,5 +43,19 @@ func HaveData(matcher pepper.Matcher[[]byte]) pepper.Matcher[io.Reader] {
 			}
 		}
 		return matcher(all)
+	}
+}
+
+func HaveString(matcher pepper.Matcher[string]) pepper.Matcher[io.Reader] {
+	return func(reader io.Reader) pepper.MatchResult {
+		all, err := io.ReadAll(reader)
+		if err != nil {
+			return pepper.MatchResult{
+				Description: "have data in io.Reader",
+				Matches:     false,
+				But:         "it could not be read",
+			}
+		}
+		return matcher(string(all))
 	}
 }

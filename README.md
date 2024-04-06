@@ -34,10 +34,10 @@ The trade-off we're making here though is you will have to make your own matcher
 Matchers should be designed with composition in mind. For instance, let's take a look at the body matcher for an HTTP response:
 
 ```go
-func HaveBody(bodyMatchers ...matching.Matcher[string]) matching.Matcher[*http.Response]
+func HaveBody(bodyMatchers ...matching.Matcher[io.Reader]) matching.Matcher[*http.Response]
 ```
 
-This allows the user to re-use string matchers that are already defined, but also lets you define your own matchers for the specific _kind_ of body you're interested in. Here's an example of some `matching.Matcher[string]` for a hypothetical JSON API that returns todo items:
+This allows the user to re-use string matchers that are already defined, but also lets you define your own matchers for the specific _kind_ of body you're interested in. Here's an example of some `matching.Matcher[io.Reader]` for a hypothetical JSON API that returns todo items:
 
 ```go
 t.Run("example of matching JSON", func(t *testing.T) {
@@ -47,19 +47,15 @@ t.Run("example of matching JSON", func(t *testing.T) {
         LastUpdated time.Time `json:"last_updated"`
     }
 
-    WithCompletedTODO := func(body string) MatchResult {
-        var todo Todo
-        _ = json.Unmarshal([]byte(body), &todo)
+    WithCompletedTODO := func(todo Todo) MatchResult {
         return MatchResult{
             Description: "have a completed todo",
             Matches:     todo.Completed,
-            But:         "it wasn't",
+            But:         "it wasn't complete",
         }
     }
-    WithTodoNameOf := func(todoName string) Matcher[string] {
-        return func(body string) MatchResult {
-            var todo Todo
-            _ = json.Unmarshal([]byte(body), &todo)
+    WithTodoNameOf := func(todoName string) Matcher[Todo] {
+        return func(todo Todo) MatchResult {
             return MatchResult{
                 Description: fmt.Sprintf("have a todo name of %q", todoName),
                 Matches:     todo.Name == todoName,
@@ -71,16 +67,16 @@ t.Run("example of matching JSON", func(t *testing.T) {
     t.Run("with completed todo", func(t *testing.T) {
         res := httptest.NewRecorder()
         res.Body.WriteString(`{"name": "Finish the side project", "completed": true}`)
-        Expect(t, res.Result()).To(HaveBody(WithCompletedTODO))
+        Expect(t, res.Result()).To(HaveBody(Parse[Todo](WithCompletedTODO)))
     })
 
     t.Run("with a todo name", func(t *testing.T) {
         res := httptest.NewRecorder()
         res.Body.WriteString(`{"name": "Finish the side project", "completed": false}`)
-        Expect(t, res.Result()).To(HaveBody(WithTodoNameOf("Finish the side project")))
+        Expect(t, res.Result()).To(HaveBody(Parse[Todo](WithTodoNameOf("Finish the side project"))))
     })
 
-    t.Run("compose various matchers", func(t *testing.T) {
+    t.Run("compose the matchers", func(t *testing.T) {
         res := httptest.NewRecorder()
 
         res.Body.WriteString(`{"name": "Egg", "completed": false}`)
@@ -89,13 +85,13 @@ t.Run("example of matching JSON", func(t *testing.T) {
         Expect(t, res.Result()).To(
             BeOK,
             HaveJSONHeader,
-            HaveBody(WithTodoNameOf("Egg"), Not(WithCompletedTODO)),
+            HaveBody(Parse[Todo](WithTodoNameOf("Egg").And(Not(WithCompletedTODO)))),
         )
     })
 })
 ```
 
-Note in the final example how we can compose built-in matchers like `BeOK`, `HaveJSONHeader` and `Not`, with the custom-built matchers to easily write very expressive tests that fail with very clear error messages.
+Note in the final example how we can compose built-in matchers like `BeOK`, `HaveJSONHeader` and `Not`, with the custom-built matchers to easily write very expressive tests that fail with very clear error messages. Pepper makes it **really easy** to check JSON responses of your HTTP handlers. 
 
 In practice, your matchers should live outside your test code. Someone could argue writing these matchers adds more code as if that's a bad thing, but I would argue that the tests read far better, and don't suffer the problems you can run in to if you lazily assert on complex types. 
 
@@ -116,12 +112,11 @@ t.Run("failing test", func(t *testing.T) {
     res := httptest.NewRecorder()
 
     res.Body.WriteString(`{"name": "Bacon", "completed": false}`)
-    res.Header().Add("content-type", "application/xml")
 
     Expect(t, res.Result()).To(
         BeOK,
         HaveJSONHeader,
-        HaveBody(WithTodoNameOf("Egg"), Not(WithCompletedTODO)),
+        HaveBody(Parse[Todo](WithTodoNameOf("Egg").And(Not(WithCompletedTODO)))),
     )
 })
 ```
@@ -130,8 +125,8 @@ Here is the failing output
 
 ```
 === RUN   TestHTTPTestMatchers/Body_matching/example_of_matching_JSON/compose_the_matchers
-    matchers_test.go:100: expected the response to have header "content-type" of "application/json", but it was "application/xml"
-    matchers_test.go:100: expected the response body to have a todo name of "Egg", but it was "Bacon"
+    matchers_test.go:100: expected the response body to have a todo name of "Egg" and not have a completed todo
+    matchers_test.go:100: expected the response to have header "content-type" of "application/json", but it was """
 ```
 
 Embracing this approach with well-written matchers means you get readable test failures for free. 

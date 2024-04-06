@@ -47,18 +47,9 @@ func HaveJSONHeader(res *http.Response) pepper.MatchResult {
 }
 
 // HaveBody returns a matcher that checks if the response body meets the given matchers' criteria. Note this will read the entire body using io.ReadAll.
-func HaveBody(bodyMatchers pepper.Matcher[string]) pepper.Matcher[*http.Response] {
+func HaveBody(bodyMatchers pepper.Matcher[io.Reader]) pepper.Matcher[*http.Response] {
 	return func(res *http.Response) pepper.MatchResult {
-		body, err := io.ReadAll(res.Body)
-		if err != nil {
-			return pepper.MatchResult{
-				Description: "have a body",
-				Matches:     false,
-				But:         "it could not be read",
-				SubjectName: responseBodySubjectName,
-			}
-		}
-		result := bodyMatchers(string(body))
+		result := bodyMatchers(res.Body)
 		result.SubjectName = responseBodySubjectName
 		return result
 	}

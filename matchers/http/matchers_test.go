@@ -1,11 +1,12 @@
 package http_test
 
 import (
-	"encoding/json"
 	"fmt"
 	. "github.com/quii/pepper"
 	. "github.com/quii/pepper/matchers/comparable"
 	. "github.com/quii/pepper/matchers/http"
+	. "github.com/quii/pepper/matchers/io"
+	. "github.com/quii/pepper/matchers/json"
 	. "github.com/quii/pepper/matchers/spytb"
 	"net/http"
 	"net/http/httptest"
@@ -38,7 +39,7 @@ func ExampleHaveBody() {
 	res := httptest.NewRecorder()
 	res.Body.WriteString("Hello, world")
 
-	Expect(t, res.Result()).To(HaveBody(EqualTo("Hello, world")))
+	Expect(t, res.Result()).To(HaveBody(HaveString(EqualTo("Hello, world"))))
 	fmt.Println(t.LastError())
 	//Output:
 }
@@ -48,7 +49,7 @@ func ExampleHaveBody_fail() {
 	res := httptest.NewRecorder()
 	res.Body.WriteString("Hello, world")
 
-	Expect(t, res.Result()).To(HaveBody(EqualTo("Goodbye, world")))
+	Expect(t, res.Result()).To(HaveBody(HaveString(EqualTo("Goodbye, world"))))
 	fmt.Println(t.LastError())
 	//Output: expected the response body to be equal to "Goodbye, world", but it was "Hello, world"
 }
@@ -140,7 +141,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 			res.Body.WriteString("Hello, world")
 
 			// see how we can compose matchers together!
-			Expect(t, res.Result()).To(HaveBody(EqualTo("Hello, world")))
+			Expect(t, res.Result()).To(HaveBody(HaveString(EqualTo("Hello, world"))))
 		})
 
 		t.Run("simple string mismatch", func(t *testing.T) {
@@ -151,7 +152,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 			VerifyFailingMatcher(
 				t,
 				res.Result(),
-				HaveBody(EqualTo("Goodbye, world")),
+				HaveBody(HaveString(EqualTo("Goodbye, world"))),
 				`expected the response body to be equal to "Goodbye, world", but it was "Hello, world"`,
 			)
 		})
@@ -163,8 +164,8 @@ func TestHTTPTestMatchers(t *testing.T) {
 			VerifyFailingMatcher(
 				t,
 				res,
-				HaveBody(EqualTo("Goodbye, world")),
-				"expected the response body to have a body, but it could not be read",
+				HaveBody(HaveString(EqualTo("Goodbye, world"))),
+				"expected the response body to have data in io.Reader, but it could not be read",
 			)
 		})
 
@@ -175,19 +176,15 @@ func TestHTTPTestMatchers(t *testing.T) {
 				LastUpdated time.Time `json:"last_updated"`
 			}
 
-			WithCompletedTODO := func(body string) MatchResult {
-				var todo Todo
-				_ = json.Unmarshal([]byte(body), &todo)
+			WithCompletedTODO := func(todo Todo) MatchResult {
 				return MatchResult{
 					Description: "have a completed todo",
 					Matches:     todo.Completed,
 					But:         "it wasn't complete",
 				}
 			}
-			WithTodoNameOf := func(todoName string) Matcher[string] {
-				return func(body string) MatchResult {
-					var todo Todo
-					_ = json.Unmarshal([]byte(body), &todo)
+			WithTodoNameOf := func(todoName string) Matcher[Todo] {
+				return func(todo Todo) MatchResult {
 					return MatchResult{
 						Description: fmt.Sprintf("have a todo name of %q", todoName),
 						Matches:     todo.Name == todoName,
@@ -199,7 +196,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 			t.Run("with completed todo", func(t *testing.T) {
 				res := httptest.NewRecorder()
 				res.Body.WriteString(`{"name": "Finish the side project", "completed": true}`)
-				Expect(t, res.Result()).To(HaveBody(WithCompletedTODO))
+				Expect(t, res.Result()).To(HaveBody(Parse[Todo](WithCompletedTODO)))
 			})
 
 			t.Run("with incomplete todo", func(t *testing.T) {
@@ -209,7 +206,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				VerifyFailingMatcher(
 					t,
 					res.Result(),
-					HaveBody(WithCompletedTODO),
+					HaveBody(Parse[Todo](WithCompletedTODO)),
 					"expected the response body to have a completed todo, but it wasn't complete",
 				)
 			})
@@ -217,7 +214,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 			t.Run("with a todo name", func(t *testing.T) {
 				res := httptest.NewRecorder()
 				res.Body.WriteString(`{"name": "Finish the side project", "completed": false}`)
-				Expect(t, res.Result()).To(HaveBody(WithTodoNameOf("Finish the side project")))
+				Expect(t, res.Result()).To(HaveBody(Parse[Todo](WithTodoNameOf("Finish the side project"))))
 			})
 
 			t.Run("with incorrect todo name and not completed", func(t *testing.T) {
@@ -227,7 +224,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				VerifyFailingMatcher(
 					t,
 					res.Result(),
-					HaveBody(WithTodoNameOf("Bacon").And(WithCompletedTODO)),
+					HaveBody(Parse[Todo](WithTodoNameOf("Bacon").And(WithCompletedTODO))),
 					`expected the response body to have a todo name of "Bacon" and have a completed todo, but it was "Egg" and it wasn't complete`,
 				)
 			})
@@ -239,7 +236,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				VerifyFailingMatcher(
 					t,
 					res.Result(),
-					HaveBody(WithTodoNameOf("Bacon")),
+					HaveBody(Parse[Todo](WithTodoNameOf("Bacon"))),
 					`expected the response body to have a todo name of "Bacon", but it was "Egg"`,
 				)
 			})
@@ -253,7 +250,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				Expect(t, res.Result()).To(
 					BeOK,
 					HaveJSONHeader,
-					HaveBody(WithTodoNameOf("Egg").And(Not(WithCompletedTODO))),
+					HaveBody(Parse[Todo](WithTodoNameOf("Egg").And(Not(WithCompletedTODO)))),
 				)
 			})
 
@@ -266,7 +263,7 @@ func TestHTTPTestMatchers(t *testing.T) {
 				Expect(spyTB, res.Result()).To(
 					BeOK,
 					HaveJSONHeader,
-					HaveBody(WithTodoNameOf("Egg").And(Not(WithCompletedTODO))),
+					HaveBody(Parse[Todo](WithTodoNameOf("Egg").And(Not(WithCompletedTODO)))),
 				)
 				Expect(t, spyTB).To(HaveError(`expected the response body to have a todo name of "Egg" and not have a completed todo`))
 				Expect(t, spyTB).To(HaveError(`expected the response to have header "content-type" of "application/json", but it was ""`))
