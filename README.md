@@ -161,10 +161,15 @@ Embracing this approach with well-written matchers means you get readable test f
 So in summary, Pepper brings the following to the table
 
 ✅ Type-safe tests. No `interface{}`
+
 ✅ Composition to reduce boilerplate
+
 ✅ Clear test output as a first-class citizen
+
 ✅ A "standard library" of matchers to let you quickly write expressive tests for common scenarios out of the box
+
 ✅ Extensibility. You can write rich, re-useable matchers for your domain to help you write high quality, low maintenance tests
+
 ❌ Still not a framework. Does not dictate how you set up your tests or how you design your code. All Pepper does is help you write better assertions with less effort overall. 
 
 
