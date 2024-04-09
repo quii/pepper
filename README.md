@@ -160,17 +160,12 @@ Embracing this approach with well-written matchers means you get readable test f
 
 So in summary, Pepper brings the following to the table
 
-✅ Type-safe tests. No `interface{}`
-
-✅ Composition to reduce boilerplate
-
-✅ Clear test output as a first-class citizen
-
-✅ A "standard library" of matchers to let you quickly write expressive tests for common scenarios out of the box
-
-✅ Extensibility. You can write rich, re-useable matchers for your domain to help you write high quality, low maintenance tests
-
-❌ Still not a framework. Does not dictate how you set up your tests or how you design your code. All Pepper does is help you write better assertions with less effort overall. 
+- ✅ Type-safe tests. No `interface{}`
+- ✅ Composition to reduce boilerplate
+- ✅ Clear test output as a first-class citizen
+- ✅ A "standard library" of matchers to let you quickly write expressive tests for common scenarios out of the box
+- ✅ Extensibility. You can write rich, re-useable matchers for your domain to help you write high quality, low maintenance tests
+- ❌ **Not a framework**. Pepper does not dictate how you set up your tests or how you design your code. All it does is help you write better assertions with less effort. 
 
 
 ## Examples
@@ -346,7 +341,11 @@ func TestComparisonMatchers(t *testing.T) {
 
 ### Contributing your own matchers
 
-If you have a matcher you think would be useful to others, please consider contributing it to this library. Your PR will need the following
+If you have a matcher you think would be useful to others, please consider contributing it to this library. 
+
+**Please only submit matchers that work against types in the standard library**. 
+
+Your PR will need the following
 
 - At least two [testable examples](https://go.dev/blog/examples), one showing the matcher passing (with an empty output) and one showing the matcher failing with the expected failing output. This will help users understand how to use your matcher. 
 - Automated tests in general
