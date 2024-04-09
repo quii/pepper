@@ -16,7 +16,7 @@ Out of the box, Pepper can work just like other test libraries in Go like [is](h
 Expect(t, "Pepper").To(Equal("Pepper"))
 ```
 
-And Pepper has lots of built-in "matchers" (the stuff you pass in to `To`), for lots of common testing operations such as examining `comparable`s, `string`, `io` and `*http.Response`.
+And Pepper has lots of built-in "matchers" (the stuff you pass in to `To`), for lots of common testing operations such as examining `comparable`, `string`, `io` and `*http.Response`.
 
 ```go
 Expect(t, 5).To(GreaterThan(3))
@@ -84,14 +84,14 @@ type Todo struct {
     LastUpdated time.Time `json:"last_updated"`
 }
 
-WithCompletedTODO := func(todo Todo) MatchResult {
+func WithCompletedTODO(todo Todo) MatchResult {
     return MatchResult{
         Description: "have a completed todo",
         Matches:     todo.Completed,
         But:         "it wasn't complete",
     }
 }
-WithTodoNameOf := func(todoName string) Matcher[Todo] {
+func WithTodoNameOf(todoName string) Matcher[Todo] {
     return func(todo Todo) MatchResult {
         return MatchResult{
             Description: fmt.Sprintf("have a todo name of %q", todoName),
