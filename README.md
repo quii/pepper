@@ -142,35 +142,30 @@ Computer, I already know that true is not equal to false. What was not false? Wh
 This library should make it easy for you to write tests that give you a clear, concise message when they fail. Here's an example of a failing test:
 
 ```go
-t.Run("failing test", func(t *testing.T) {
+t.Run("failure message", func(t *testing.T) {
     res := httptest.NewRecorder()
-
-    res.Body.WriteString(`{"name": "Bacon", "completed": false}`)
-
-    Expect(t, res.Result()).To(
-        BeOK,
-        HaveJSONHeader,
-        HaveBody(Parse[Todo](WithTodoNameOf("Egg").And(Not(WithCompletedTODO)))),
-    )
+    res.WriteHeader(http.StatusNotFound)
+    Expect(t, res.Result()).To(BeOK)
 })
 ```
 
 Here is the failing output
 
 ```
-=== RUN   TestHTTPTestMatchers/Body_matching/example_of_matching_JSON/compose_the_matchers
-    matchers_test.go:100: expected the response body to have a todo name of "Egg" and not have a completed todo
-    matchers_test.go:100: expected the response to have header "content-type" of "application/json", but it was """
+=== RUN   TestHTTPTestMatchers/Status_code_matchers/OK/failure_message
+    matchers_test.go:292: expected the response to have status of 200, but it was 404
 ```
 
 Embracing this approach with well-written matchers means you get readable test failures for free.
 
 So in summary, Pepper brings the following to the table
-- ✅ Type-safe tests. No `interface{}`
-- ✅ Composition to reduce boilerplate
-- ✅ Clear test output as a first-class citizen
-- ✅ A "standard library" of matchers to let you quickly write expressive tests for common scenarios out of the box
-- ✅ Extensibility. You can write rich, re-useable matchers for your domain to help you write high quality, low maintenance tests
+
+✅ Type-safe tests. No `interface{}`
+✅ Composition to reduce boilerplate
+✅ Clear test output as a first-class citizen
+✅ A "standard library" of matchers to let you quickly write expressive tests for common scenarios out of the box
+✅ Extensibility. You can write rich, re-useable matchers for your domain to help you write high quality, low maintenance tests
+❌ Still not a framework. Does not dictate how you set up your tests or how you design your code. All Pepper does is help you write better assertions with less effort overall. 
 
 
 ## Examples
