@@ -1,6 +1,7 @@
 # Pepper
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/quii/pepper.svg)](https://pkg.go.dev/github.com/quii/pepper)
+[![Go Report Card](https://goreportcard.com/badge/github.com/quii/pepper)](https://goreportcard.com/report/github.com/quii/pepper)
 ![Test suite status](https://github.com/quii/pepper/actions/workflows/test.yaml/badge.svg)
 
 ##  _Type-safe_, composable, extensible test matching for Go
