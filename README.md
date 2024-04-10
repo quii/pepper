@@ -233,6 +233,25 @@ The _bare minimum_ you need to write a matcher is to complete the `Matches` fiel
 
 Pepper will not bend over backwards to write _perfect_ English. It's important that the reason for test failure is clear, but perfect grammar is not needed for this; and the complexity cost involved to make matchers "write" different sentences depending on how they are used, is not worth it. 
 
+### Dot imports?
+
+As you'll see from the examples, Pepper is using "Dot imports", where you import the Pepper package, and other matching package and alias it to `.`.
+
+This allows you to write `Expert(t, "Pepper").To(Equal("Pepper"))` _rather than_, `pepper.Expect(t, "Pepper").To(comparable.Equal("Pepper"))`. Of course, as a consumer of Pepper, _you can choose which style you prefer_. 
+
+Dot imports have a number of documented downsides, perhaps most importantly, they are [not part of the Go 1 backward compatibility guarantee](https://go.dev/doc/go1compat)
+
+> If a program imports a standard package using import . "path", additional names defined in the imported package in future releases may conflict with other names defined in the program. **We do not recommend the use of import . outside of tests**, and using it may cause a program to fail to compile in future releases.
+
+(Emphasis mine)
+
+Other potential issues:
+
+- Shaky IDE support. Some commentary on the internet says some editors/IDE struggle with dot imports, but I do not find this is true with Intellij at least. I can "jump to definition" on a dot imported file, and it will still take me to the correct source.
+- May make code less easy to understand. In my view, I would tentatively agree, I like seeing package names generally in Go code, and it helps me design coherent packages, but in trying to make a library like Pepper, it does cause in my view a fair amount of unnecessary noise. 
+
+In short, this is a trade-off between fluency of writing test code, and a slight obfuscation as to _where_ symbols like `EqualTo`, `Parse` etc. come from. Whilst _I_ will use dot imports, and document examples with it, you as a consumer, are free to avoid it if you wish. 
+
 ## Benefits of matchers
 
 A lot of the time people zero-in on the "fluency" of matchers. Whilst it's true that the ease of use does make using matchers attractive, I think there's a larger, perhaps less obvious benefit. 
