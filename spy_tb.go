@@ -7,7 +7,7 @@ type SpyTB struct {
 	ErrorCalls []string
 }
 
-// Result will print the test result
+// Result will print the test result.
 func (s *SpyTB) Result() string {
 	if len(s.ErrorCalls) == 0 {
 		return "Test passed"
