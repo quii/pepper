@@ -265,8 +265,8 @@ Dot imports have a number of documented downsides, perhaps most importantly, the
 
 Other potential issues:
 
-- Shaky IDE support. Some commentary on the internet says some editors/IDE struggle with dot imports, but I do not find this is true with Intellij at least. I can "jump to definition" on a dot imported file, and it will still take me to the correct source.
-- May make code less easy to understand. In my view, I would tentatively agree, I like seeing package names generally in Go code, and it helps me design coherent packages, but in trying to make a library like Pepper, it does cause in my view a fair amount of unnecessary noise. 
+- Shaky IDE support. Some commentary on the internet says some editors/IDE struggle with dot imports, but I do not find this is true with Intellij at least. I can "jump to definition" on a dot imported symbol, and it will still take me to the correct source.
+- May make code less easy to understand. In my view, I would tentatively agree, I like seeing package names generally in Go code, and it helps me design coherent packages, but in trying to make a library like Pepper, it does cause in my view a fair amount of unnecessary noise. In particular, the more composition you do, the more repeated package name instances you'll see, and given matcher composition is one of the main design goals of Pepper, this is a problem!
 
 In short, this is a trade-off between fluency of writing test code, and a slight obfuscation as to _where_ symbols like `EqualTo`, `Parse` etc. come from. Whilst _I_ will use dot imports, and document examples with it, you as a consumer, are free to avoid it if you wish. 
 
