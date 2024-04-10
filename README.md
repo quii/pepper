@@ -8,6 +8,10 @@
 
 Inspired by [Hamcrest](https://hamcrest.org)
 
+> When writing tests it is sometimes difficult to get the balance right between over specifying the test (and making it brittle to changes), and not specifying enough (making the test less valuable since it continues to pass even when the thing being tested is broken). Having a tool that allows you to pick out precisely the aspect under test and describe the values it should have, to a controlled level of precision, helps greatly in writing tests that are “just right”. Such tests fail when the behaviour of the aspect under test deviates from the expected behaviour, yet continue to pass when minor, unrelated changes to the behaviour are made.
+
+From [The Hamcrest Introduction](https://hamcrest.org/JavaHamcrest/tutorial)
+
 Out of the box, Pepper can work just like other test libraries in Go like [is](https://github.com/matryer/is), where you can make basic assertions on data.
 
 ### Simple examples
@@ -192,9 +196,11 @@ Finally, I have worked through my course [Learn Go with Tests](https://quii.gitb
 
 ### Type-safety
 
-Now Go has generics, we now have a more expressive language which lets us make matchers that are type-safe, rather than relying on reflection. The problem with reflection is it can lead to lazy test writing, especially when you're dealing with complex types. Developers can lazily assert on complex types, which makes the tests harder to follow and more brittle. See the [curse of asserting on irrelevant detail](#the-curse-of-asserting-on-irrelevant-detail) for more on this.
+Now Go has generics, we have a more expressive language which lets us make matchers that are type-safe, rather than relying on reflection. The problem with reflection is it can lead to lazy test writing, especially when you're dealing with complex types. Developers can lazily assert on complex types, which makes the tests harder to follow and more brittle. See the [curse of asserting on irrelevant detail](#the-curse-of-asserting-on-irrelevant-detail) for more on this.
 
-The trade-off we're making here though is you will have to make your own matchers for your own types at times. This is a good thing, as it forces you to think about what you're actually testing, and it makes your tests more readable and less brittle. There will be plenty of examples to show how, and you can read the existing standard library of matchers to see how it's done. Due to the compositional nature of the library though, you _should_ be able to leverage existing matchers for re-use.
+The trade-off we're making here is you will have to make your own matchers for your own types at times. This is a good thing, as it forces you to think about what you're actually testing, and it makes your tests more readable and less brittle. 
+
+Due to the compositional nature of the library though, you _should_ be able to leverage existing matchers for re-use. For example, you'll never have to make a matcher that parses JSON, you should instead use [Parse](https://pkg.go.dev/github.com/quii/pepper/matchers/json#example-Parse) in combination with a matcher of your type.
 
 Due to Go having some constraints on _where_ you can use generics, such as function types not being allowed to have type parameters, the API isn't as friendly as it would be, if you used `interface{}`/`any`. However, this is a trade-off I am OK with, in the name of type-safety. 
 
@@ -210,9 +216,22 @@ This allows the user to re-use `io.Reader` matchers that are already defined, co
 
 ### Test failure readability
 
-Often the most expensive part of a test suite is trying to understand _what_ has failed when a test goes red. This is why TDD emphasises the first step of writing a failing test and inspecting the output. It's a chance for you to see what it's like if the test fails 6 months later, and you've lost all context. Pepper strives to make it easy for you to write tests that explain exactly what has gone wrong.
+Often the most expensive part of a test suite is trying to understand _what_ has failed when a test goes red. This is why TDD emphasises the first step of writing a failing test and inspecting the output. It's a chance for you to see what it's like if the test fails 6 months later, and you've lost all context. 
 
-Please note though that this library will not bend over backwards to write _perfect_ English. It's important that the reason for test failure is clear, but perfect grammar is not needed for this; and the complexity cost involved to make matchers "write" different sentences depending on how they are used, is not worth it. 
+Pepper strives to make it easy for you to write tests that explain exactly what has gone wrong, but it does require a little more upfront effort when writing your own matchers. 
+
+```go
+type MatchResult struct {
+	Description string
+	Matches     bool
+	But         string
+	SubjectName string
+}
+```
+
+The _bare minimum_ you need to write a matcher is to complete the `Matches` field, but to get good test failure messages, you'll need to invest a little time filling the other fields and checking the failure reads nicely.
+
+Pepper will not bend over backwards to write _perfect_ English. It's important that the reason for test failure is clear, but perfect grammar is not needed for this; and the complexity cost involved to make matchers "write" different sentences depending on how they are used, is not worth it. 
 
 ## Benefits of matchers
 
@@ -302,7 +321,7 @@ func HaveSize[T any](matcher pepper.Matcher[int]) pepper.Matcher[[]T] {
 
 This way, users can use this matcher in different ways, like checking if a slice has a size `LessThan(5)` or `GreaterThan(3)`.
 
-With this simple change, users can leverage the _other_ composition tools like `And`:
+With this simple change, users can also leverage the _other_ composition tools like `And`:
 
 ```go
 Expect(t, catsInAHotel).To(HaveSize(GreaterThan(3).And(LessThan(10))))
