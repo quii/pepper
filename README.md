@@ -235,7 +235,25 @@ Pepper will not bend over backwards to write _perfect_ English. It's important t
 
 ### Dot imports?
 
-As you'll see from the examples, Pepper is using "Dot imports", where you import the Pepper package, and other matching package and alias it to `.`.
+As you'll see from the examples, Pepper is using "Dot imports", where you import the Pepper package, and other matching package and alias it to `.`
+
+Here is the import statement for the HTTP matchers test file as an example
+
+```go
+import (
+	"fmt"
+	. "github.com/quii/pepper"
+	. "github.com/quii/pepper/matchers/comparable"
+	. "github.com/quii/pepper/matchers/http"
+	. "github.com/quii/pepper/matchers/io"
+	. "github.com/quii/pepper/matchers/json"
+	. "github.com/quii/pepper/matchers/spytb"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+)
+```
 
 This allows you to write `Expert(t, "Pepper").To(Equal("Pepper"))` _rather than_, `pepper.Expect(t, "Pepper").To(comparable.Equal("Pepper"))`. Of course, as a consumer of Pepper, _you can choose which style you prefer_. 
 
