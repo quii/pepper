@@ -16,7 +16,7 @@ Out of the box, Pepper can work just like other test libraries in Go like [is](h
 Expect(t, "Pepper").To(Equal("Pepper"))
 ```
 
-And Pepper has lots of built-in "matchers" (the stuff you pass in to `To`), for common testing operations such as examining `comparable`, `string`, `io` and `*http.Response`.
+And Pepper has lots of built-in **matchers**, which you pass in to `To`, for common testing operations such as examining `comparable`, `string`, `io` and `*http.Response`.
 
 What is a `Matcher[T]` ? It's a function that takes a `T`, and returns a `MatchResult`
 
