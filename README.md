@@ -1,14 +1,14 @@
 # Pepper
 
+##  _Type-safe_, composable, extensible test matching for Go
+
 [![Go Reference](https://pkg.go.dev/badge/github.com/quii/pepper.svg)](https://pkg.go.dev/github.com/quii/pepper)
 [![Go Report Card](https://goreportcard.com/badge/github.com/quii/pepper)](https://goreportcard.com/report/github.com/quii/pepper)
 ![Test suite status](https://github.com/quii/pepper/actions/workflows/test.yaml/badge.svg)
 
-##  _Type-safe_, composable, extensible test matching for Go
-
 Inspired by [Hamcrest](https://hamcrest.org)
 
-Out of the box, Pepper can work just like other test libraries in Go like [is](https://github.com/matryer/is), where you can make basic assertions on data
+Out of the box, Pepper can work just like other test libraries in Go like [is](https://github.com/matryer/is), where you can make basic assertions on data.
 
 ### Simple examples
 
@@ -16,27 +16,7 @@ Out of the box, Pepper can work just like other test libraries in Go like [is](h
 Expect(t, "Pepper").To(Equal("Pepper"))
 ```
 
-And Pepper has lots of built-in "matchers" (the stuff you pass in to `To`), for lots of common testing operations such as examining `comparable`, `string`, `io` and `*http.Response`.
-
-```go
-Expect(t, 5).To(GreaterThan(3))
-```
-
-Quite nice, but still, not all that different from libraries you already use. Pepper starts to come into its own when you start taking advantage of _composing matchers_.
-
-### Composing matchers
-
-```go
-Expect(t, score).To(GreaterThan(5).And(LessThan(10)))
-```
-
-The method `And` on `Matcher[T]`, lets you assert on two properties. `And` _returns_ the composed `Matcher[T]`, so you can continue to chain more matchers however you like.
-
-```go
-Expect(t, score).To(GreaterThan(5).And(Not(GreaterThan(opponentScore))))
-```
-
-`Not` negates a matcher. Hopefully you can see how by using matchers, and composing them with `And`, `Not`, `Or`, you can write very expressive tests, cheaply. 
+And Pepper has lots of built-in "matchers" (the stuff you pass in to `To`), for common testing operations such as examining `comparable`, `string`, `io` and `*http.Response`.
 
 What is a `Matcher[T]` ? It's a function that takes a `T`, and returns a `MatchResult`
 
@@ -67,15 +47,35 @@ func HaveAllCaps(in string) matching.MatchResult {
 }
 ```
 
+```go
+Expect(t, "HELLO").To(HaveAllCaps)
+```
+
+Quite nice, but still, not all that different from libraries you already use. Pepper starts to come into its own when you start taking advantage of _composing matchers_.
+
+### Composing matchers
+
+```go
+Expect(t, score).To(GreaterThan(5).And(LessThan(10)))
+```
+
+The method `And` on `Matcher[T]`, lets you compose matchers. `And` _returns_ the composed `Matcher[T]`, so you can continue to chain more matchers however you like.
+
+```go
+Expect(t, score).To(GreaterThan(5).And(Not(GreaterThan(opponentScore))))
+```
+
+`Not` negates a matcher. By using matchers, and composing them with `And`, `Not`, `Or`, you can write very expressive tests, cheaply.
+
 ### Defining your own matchers
 
-You can define your own matchers for your test suite. Over time, the investment in writing matchers for your tests pays dividends, the cost of writing your tests decrease, as you reuse, mix and match the standard matchers and composition tools with your own. 
+You can define your own matchers for your own types. Over time, the investment in writing matchers for your tests pays dividends, the cost of writing your tests decrease, as you reuse, mix and match the standard matchers and composition tools with your own. 
 
 Some will argue writing these matchers adds more code as if that's inherently a bad thing, but I would argue that the tests read far better, and don't suffer the problems you can run in to if you lazily assert on complex types.
 
 In my experience of using matchers, over time as you find yourself testing more and more permutations of behaviour, the effort behind the matchers pays off in terms of making tests easier to write, read and maintain.
 
-Here is an example of testing a todo-list API
+Here is an example of testing a todo-list
 
 ```go
 type Todo struct {
@@ -131,15 +131,17 @@ func TestTodos(t *testing.T) {
 
 Note how we can compose built-in matchers like `BeOK`, `HaveJSONHeader` and `Not`, with the custom-built matchers to easily write very expressive tests that fail with very clear error messages. Pepper makes it **really easy** to check JSON responses of your HTTP handlers.
 
+Also note, due to the compositional nature of `Matcher[T]`, we can re-use our `Matcher[Todo]` for tests at different abstraction levels; these matchers are not coupled to HTTP, we _composed_ the matchers for this context. For instance, if you have a `TodoRepository`, you could use _these same matchers_ in the tests for that too. 
+
 ### Test failure readability
 
-One of the most frustrating areas of working in a codebase with automated tests is how often test failure quality is poor. I'm sure every developer has into this scenario:
+One of the most frustrating areas working with automated tests is how often test failure quality is poor. I'm sure every developer has into this scenario:
 
 > `test_foo.go:123` - `true was not equal to false`
 
-Computer, I already know that true is not equal to false. What was not false? What was true? What was the context? This is another reason why following TDD's process of "inspecting the failing test message" is so important, but sadly often overlooked.
+Computer, I already know that true is not equal to false. What was not false? What was true? What was the context? 
 
-This library should make it easy for you to write tests that give you a clear, concise message when they fail. Here's an example of a failing test:
+Pepper makes it easy for you to write tests that give you a clear message when they fail.
 
 ```go
 t.Run("failure message", func(t *testing.T) {
@@ -158,7 +160,9 @@ Here is the failing output
 
 Embracing this approach with well-written matchers means you get readable test failures for free.
 
-So in summary, Pepper brings the following to the table
+### Summary
+
+Pepper brings the following to the table
 
 - ✅ Type-safe tests. No `interface{}`
 - ✅ Composition to reduce boilerplate
@@ -182,27 +186,31 @@ t := &SpyTB{}
 
 This is a test spy that is used to verify the output of the matches made. The examples call `LastError()` to see what test output would happen, so you can see what the failures look like. 
 
+Finally, I have worked through my course [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests), using Pepper to write assertions, so you can find more examples [at the Github repository](https://github.com/quii/learn-go-with-pepper)
+
 ## Trade-offs and optimisations
 
 ### Type-safety
 
 Now Go has generics, we now have a more expressive language which lets us make matchers that are type-safe, rather than relying on reflection. The problem with reflection is it can lead to lazy test writing, especially when you're dealing with complex types. Developers can lazily assert on complex types, which makes the tests harder to follow and more brittle. See the [curse of asserting on irrelevant detail](#the-curse-of-asserting-on-irrelevant-detail) for more on this.
 
-The trade-off we're making here though is you will have to make your own matchers for your own types at times. This is a good thing, as it forces you to think about what you're actually testing, and it makes your tests more readable and less brittle. There will be plenty of examples to show how, and you can read the existing standard library of matchers to see how it's done. Due to the compositional nature of the library though, you _should_ be able to leverage existing matchers for re-use. 
+The trade-off we're making here though is you will have to make your own matchers for your own types at times. This is a good thing, as it forces you to think about what you're actually testing, and it makes your tests more readable and less brittle. There will be plenty of examples to show how, and you can read the existing standard library of matchers to see how it's done. Due to the compositional nature of the library though, you _should_ be able to leverage existing matchers for re-use.
 
-### Composition
+Due to Go having some constraints on _where_ you can use generics, such as function types not being allowed to have type parameters, the API isn't as friendly as it would be, if you used `interface{}`/`any`. However, this is a trade-off I am OK with, in the name of type-safety. 
+
+### Composition and re-use
 
 Matchers should be designed with composition in mind. For instance, let's take a look at the body matcher for an HTTP response:
 
 ```go
-func HaveBody(bodyMatchers ...matching.Matcher[io.Reader]) matching.Matcher[*http.Response]
+func HaveBody(bodyMatchers pepper.Matcher[io.Reader]) pepper.Matcher[*http.Response]
 ```
 
-This allows the user to re-use string matchers that are already defined, but also lets you define your own matchers for the specific _kind_ of body you're interested in.
+This allows the user to re-use `io.Reader` matchers that are already defined, compose them with `And`/`Or`/`Not`, and of course users can define their own `Matcher[io.Reader]` too. 
 
-### Test failure readibility
+### Test failure readability
 
-As mentioned before, often the most expensive part of a test suite is trying to understand _what_ has failed when a test goes red. This is why TDD emphasises the first step of writing a failing test and inspecting the output. It's a chance for you to see what it's like if the test fails 6 months later, and you've lost all context. Pepper strives to make it easy for you to write tests that explain exactly what has gone wrong.
+Often the most expensive part of a test suite is trying to understand _what_ has failed when a test goes red. This is why TDD emphasises the first step of writing a failing test and inspecting the output. It's a chance for you to see what it's like if the test fails 6 months later, and you've lost all context. Pepper strives to make it easy for you to write tests that explain exactly what has gone wrong.
 
 Please note though that this library will not bend over backwards to write _perfect_ English. It's important that the reason for test failure is clear, but perfect grammar is not needed for this; and the complexity cost involved to make matchers "write" different sentences depending on how they are used, is not worth it. 
 
@@ -221,13 +229,9 @@ Often when we write a test, we only really care about the state of one field in 
 
 Matchers allow you to write _domain specific_ matching code, focused on the _specific effects_ you're looking for. When used well, with a domain-centric, well-designed codebase, you tend to build a useful library of matchers that you can **re-use and compose** to write clear, consistently written, less brittle tests.
 
-## Writing your own matchers
+## How to write your own matchers
 
-Writing your own matchers is a great way of building a re-usable, composable library for your domain code.
-
-### How to
-
-A matcher is a function that takes the _thing_ you're trying to match against, returning a result
+Reminder: a matcher is a function that takes the _thing_ you're trying to match against, returning a result
 
 ```go
 type Matcher[T any] func(T) MatchResult
@@ -304,12 +308,38 @@ With this simple change, users can leverage the _other_ composition tools like `
 Expect(t, catsInAHotel).To(HaveSize(GreaterThan(3).And(LessThan(10))))
 ```
 
+_Tip_: When designing your matcher, consider changing the argument(s) from `T` to `Matcher[T]`. 
+
 
 ### Test support
 
-It might be overkill to unit test matchers, but if you intend for them to be re-used a lot (like the library included in this package), it might be worth doing. I find it's a useful way to see in isolation the test output on failure. 
+Pepper makes testing matchers easy because you inject in the testing framework into `Expect`, so we can _spy_ on it. 
 
-Thankfully, Pepper makes this easy
+I have found writing [testable examples](https://go.dev/blog/examples) though to be a satisfying way of both documenting and testing matchers.
+
+```go
+func ExampleContainItem() {
+	t := &SpyTB{}
+
+	anArray := []string{"HELLO", "WORLD"}
+	Expect(t, anArray).To(ContainItem(HaveAllCaps))
+
+	fmt.Println(t.LastError())
+	//Output:
+}
+
+func ExampleContainItem_fail() {
+	t := &SpyTB{}
+
+	anArray := []string{"hello", "world"}
+	Expect(t, anArray).To(ContainItem(HaveAllCaps))
+
+	fmt.Println(t.LastError())
+	//Output: expected [hello world] to contain an item in all caps, but it did not
+}
+```
+
+However, if you wish to check multiple scenarios, polluting the go doc with lots of examples may not be appropriate, in which case, write some unit tests.
 
 Check out some of the unit tests for some of the comparison matchers
 
@@ -343,7 +373,7 @@ func TestComparisonMatchers(t *testing.T) {
 
 If you have a matcher you think would be useful to others, please consider contributing it to this library. 
 
-**Please only submit matchers that work against types in the standard library**. 
+**Please only submit matchers that work against types in the standard library**. This keeps the library focused and backward compatible. It would be fantastic if over time this library matured into a rich suite of matchers so any dev can pick up Go and start writing excellent tests against the standard library, which already gets you so far in terms of getting work done. 
 
 Your PR will need the following
 
