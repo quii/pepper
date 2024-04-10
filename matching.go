@@ -48,16 +48,6 @@ func ExpectErrorOfType(t TB, err error, expectedType error) {
 	}
 }
 
-// Act is a helper function that will run the "act" function and expect no error. If there is an error it will call Errorf on the testing.TB. Otherwise, an inspector is returned. This is to cater for the fairly common case of writing tests around functions and methods that return T or an error.
-func Act[T any](t TB, act func() (T, error)) Inspector[T] {
-	t.Helper()
-	result, err := act()
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-	}
-	return Inspector[T]{t, result}
-}
-
 // To is the method that actually runs the matchers. It will call Errorf on the testing.TB if any of the matchers fail.
 func (e Inspector[T]) To(matchers ...Matcher[T]) {
 	e.t.Helper()
@@ -72,11 +62,6 @@ func (e Inspector[T]) To(matchers ...Matcher[T]) {
 			e.t.Error(result.Error())
 		}
 	}
-}
-
-func (e Inspector[T]) AndAssertSubject(matchers ...Matcher[T]) Inspector[T] {
-	e.To(matchers...)
-	return e
 }
 
 func calculateSubjectName[T any](e Inspector[T]) string {
