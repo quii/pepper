@@ -20,8 +20,8 @@ func ExampleHaveFileCalled_fail() {
 
 	Expect[fs.FS](t, stubFS).To(HaveFileCalled("someFile.txt", HaveSubstring("Pluto")))
 
-	fmt.Println(t.LastError())
-	//Output: expected file called someFile.txt to contain "Pluto"
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected file called someFile.txt to contain "Pluto"]
 }
 
 func ExampleHaveFileCalled() {
@@ -34,8 +34,8 @@ func ExampleHaveFileCalled() {
 
 	Expect[fs.FS](t, stubFS).To(HaveFileCalled("someFile.txt"))
 
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleHaveDir() {
@@ -48,8 +48,8 @@ func ExampleHaveDir() {
 
 	Expect[fs.FS](t, stubFS).To(HaveDir("someDir"))
 
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleHaveDir_fail() {
@@ -62,8 +62,8 @@ func ExampleHaveDir_fail() {
 
 	Expect[fs.FS](t, stubFS).To(HaveDir("someFile.txt"))
 
-	fmt.Println(t.LastError())
-	//Output: expected file system to have directory called "someFile.txt", but it was not a directory
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected file system to have directory called "someFile.txt", but it was not a directory]
 }
 
 func TestFSMatching(t *testing.T) {

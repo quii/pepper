@@ -15,8 +15,8 @@ func ExampleShallowEquals() {
 	anArray := []string{"hello", "world"}
 	Expect(t, anArray).To(ShallowEquals([]string{"hello", "world"}))
 
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleShallowEquals_fail() {
@@ -25,8 +25,8 @@ func ExampleShallowEquals_fail() {
 	anArray := []string{"hello", "world"}
 	Expect(t, anArray).To(ShallowEquals([]string{"goodbye", "world"}))
 
-	fmt.Println(t.LastError())
-	//Output: expected [hello world] to be equal to [goodbye world]
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected [hello world] to be equal to [goodbye world]]
 }
 
 func ExampleContainItem() {
@@ -35,8 +35,8 @@ func ExampleContainItem() {
 	anArray := []string{"HELLO", "WORLD"}
 	Expect(t, anArray).To(ContainItem(HaveAllCaps))
 
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleContainItem_fail() {
@@ -45,8 +45,8 @@ func ExampleContainItem_fail() {
 	anArray := []string{"hello", "world"}
 	Expect(t, anArray).To(ContainItem(HaveAllCaps))
 
-	fmt.Println(t.LastError())
-	//Output: expected [hello world] to contain an item in all caps, but it did not
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected [hello world] to contain an item in all caps, but it did not]
 }
 
 func ExampleHaveSize() {
@@ -55,8 +55,8 @@ func ExampleHaveSize() {
 	anArray := []string{"hello", "world"}
 	Expect(t, anArray).To(HaveSize[string](EqualTo(2)))
 
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleHaveSize_fail() {
@@ -65,8 +65,8 @@ func ExampleHaveSize_fail() {
 	anArray := []string{"hello", "world"}
 	Expect(t, anArray).To(HaveSize[string](EqualTo(3)))
 
-	fmt.Println(t.LastError())
-	//Output: expected [hello world] to have a size be equal to 3, but it was 2
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected [hello world] to have a size be equal to 3, but it was 2]
 }
 
 func ExampleEveryItem() {
@@ -75,8 +75,8 @@ func ExampleEveryItem() {
 	anArray := []string{"hello", "world"}
 	Expect(t, anArray).To(EveryItem(HaveSubstring("o")))
 
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleEveryItem_fail() {
@@ -85,8 +85,8 @@ func ExampleEveryItem_fail() {
 	anArray := []string{"hello", "world"}
 	Expect(t, anArray).To(EveryItem(HaveSubstring("h")))
 
-	fmt.Println(t.LastError())
-	//Output: expected [hello world] to have every item contain "h"
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected [hello world] to have every item contain "h"]
 }
 
 func TestArrayMatchers(t *testing.T) {

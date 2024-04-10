@@ -10,57 +10,57 @@ import (
 func ExampleEqual() {
 	t := &SpyTB{}
 	Expect(t, 2).To(Equal(2))
-	fmt.Println(t.LastError())
-	// Output:
+	fmt.Println(t.Result())
+	// Output: Test passed
 }
 
 func ExampleEqual_fail() {
 	t := &SpyTB{}
 	Expect(t, 2).To(Equal(1))
-	fmt.Println(t.LastError())
-	// Output: expected 2 to be equal to 1, but it was 2
+	fmt.Println(t.Result())
+	// Output: Test failed: [expected 2 to be equal to 1, but it was 2]
 }
 
 func ExampleEqualTo() {
 	t := &SpyTB{}
 	Expect(t, 5).To(EqualTo(5))
-	fmt.Println(t.LastError())
-	// Output:
+	fmt.Println(t.Result())
+	// Output: Test passed
 }
 
 func ExampleEqualTo_fail() {
 	t := &SpyTB{}
 	Expect(t, 5).To(EqualTo(4))
-	fmt.Println(t.LastError())
-	// Output: expected 5 to be equal to 4, but it was 5
+	fmt.Println(t.Result())
+	// Output: Test failed: [expected 5 to be equal to 4, but it was 5]
 }
 
 func ExampleGreaterThan() {
 	t := &SpyTB{}
 	Expect(t, 5).To(GreaterThan(4))
-	fmt.Println(t.LastError())
-	// Output:
+	fmt.Println(t.Result())
+	// Output: Test passed
 }
 
 func ExampleGreaterThan_fail() {
 	t := &SpyTB{}
 	Expect(t, 5).To(GreaterThan(6))
-	fmt.Println(t.LastError())
-	// Output: expected 5 to be greater than 6, but it was 5
+	fmt.Println(t.Result())
+	// Output: Test failed: [expected 5 to be greater than 6, but it was 5]
 }
 
 func ExampleLessThan() {
 	t := &SpyTB{}
 	Expect(t, 5).To(LessThan(6))
-	fmt.Println(t.LastError())
-	// Output:
+	fmt.Println(t.Result())
+	// Output: Test passed
 }
 
 func ExampleLessThan_fail() {
 	t := &SpyTB{}
 	Expect(t, 5).To(LessThan(4))
-	fmt.Println(t.LastError())
-	// Output: expected 5 to be less than 4, but it was 5
+	fmt.Println(t.Result())
+	// Output: Test failed: [expected 5 to be less than 4, but it was 5]
 }
 
 func TestComparisonMatchers(t *testing.T) {

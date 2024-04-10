@@ -13,8 +13,8 @@ func ExampleHaveAllCaps() {
 
 	Expect(t, "HELLO").To(HaveAllCaps)
 
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleHaveAllCaps_fail() {
@@ -22,8 +22,8 @@ func ExampleHaveAllCaps_fail() {
 
 	Expect(t, "hello").To(HaveAllCaps)
 
-	fmt.Println(t.LastError())
-	//Output: expected hello to in all caps, but it was not in all caps
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected hello to in all caps, but it was not in all caps]
 }
 
 func ExampleHaveLength() {
@@ -31,8 +31,8 @@ func ExampleHaveLength() {
 
 	Expect(t, "hello").To(HaveLength(EqualTo(5)))
 
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleHaveLength_fail() {
@@ -40,8 +40,8 @@ func ExampleHaveLength_fail() {
 
 	Expect(t, "hello").To(HaveLength(EqualTo(4)))
 
-	fmt.Println(t.LastError())
-	//Output: expected hello to have length be equal to 4, but it was 5
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected hello to have length be equal to 4, but it was 5]
 }
 
 func ExampleHaveSubstring() {
@@ -49,8 +49,8 @@ func ExampleHaveSubstring() {
 
 	Expect(t, "hello").To(HaveSubstring("ell"))
 
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleHaveSubstring_fail() {
@@ -58,8 +58,8 @@ func ExampleHaveSubstring_fail() {
 
 	Expect(t, "hello").To(HaveSubstring("goodbye"))
 
-	fmt.Println(t.LastError())
-	//Output: expected hello to contain "goodbye"
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected hello to contain "goodbye"]
 }
 
 func Example() {
@@ -72,8 +72,8 @@ func Example() {
 		Doesnt(HaveAllCaps),
 	)
 
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 func TestStringMatchers(t *testing.T) {
 	t.Run("Have length", func(t *testing.T) {

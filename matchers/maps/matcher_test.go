@@ -13,8 +13,8 @@ func ExampleWithAnyValue() {
 
 	Expect(t, map[string]string{"hello": "world"}).To(HaveKey("goodbye", WithAnyValue[string]()))
 
-	fmt.Println(t.LastError())
-	//Output: expected map[hello:world] to have key goodbye, but it did not
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected map[hello:world] to have key goodbye, but it did not]
 }
 
 func ExampleHaveKey_fail() {
@@ -22,8 +22,8 @@ func ExampleHaveKey_fail() {
 
 	Expect(t, map[string]int{"score": 4}).To(HaveKey("score", GreaterThan(5).And(LessThan(10))))
 
-	fmt.Println(t.LastError())
-	//Output: expected map[score:4] to have key score with value be greater than 5 and be less than 10, but it was 4
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected map[score:4] to have key score with value be greater than 5 and be less than 10, but it was 4]
 }
 
 func ExampleHaveKey() {
@@ -31,8 +31,8 @@ func ExampleHaveKey() {
 
 	Expect(t, map[string]string{"hello": "world"}).To(HaveKey("hello", EqualTo("world")))
 
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func TestMapMatching(t *testing.T) {

@@ -20,8 +20,8 @@ func ExampleBeOK() {
 	res.WriteHeader(http.StatusOK)
 
 	Expect(t, res.Result()).To(BeOK)
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleBeOK_fail() {
@@ -30,8 +30,8 @@ func ExampleBeOK_fail() {
 	res.WriteHeader(http.StatusNotFound)
 
 	Expect(t, res.Result()).To(BeOK)
-	fmt.Println(t.LastError())
-	//Output: expected the response to have status of 200, but it was 404
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected the response to have status of 200, but it was 404]
 }
 
 func ExampleHaveBody() {
@@ -40,8 +40,8 @@ func ExampleHaveBody() {
 	res.Body.WriteString("Hello, world")
 
 	Expect(t, res.Result()).To(HaveBody(HaveString(EqualTo("Hello, world"))))
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleHaveBody_fail() {
@@ -50,8 +50,8 @@ func ExampleHaveBody_fail() {
 	res.Body.WriteString("Hello, world")
 
 	Expect(t, res.Result()).To(HaveBody(HaveString(EqualTo("Goodbye, world"))))
-	fmt.Println(t.LastError())
-	//Output: expected the response body to be equal to "Goodbye, world", but it was "Hello, world"
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected the response body to be equal to "Goodbye, world", but it was "Hello, world"]
 }
 
 func ExampleHaveHeader() {
@@ -60,8 +60,8 @@ func ExampleHaveHeader() {
 	res.Header().Add("Content-Type", "text/html")
 
 	Expect(t, res.Result()).To(HaveHeader("Content-Type", "text/html"))
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleHaveJSONHeader() {
@@ -70,8 +70,8 @@ func ExampleHaveJSONHeader() {
 	res.Header().Add("Content-Type", "application/json")
 
 	Expect(t, res.Result()).To(HaveJSONHeader)
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleHaveHeader_multiple() {
@@ -84,8 +84,8 @@ func ExampleHaveHeader_multiple() {
 		HaveHeader("Content-Encoding", "gzip"),
 		HaveHeader("Content-Type", "text/html"),
 	)
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleHaveHeader_multiple_fail() {
@@ -97,10 +97,8 @@ func ExampleHaveHeader_multiple_fail() {
 		HaveHeader("Content-Encoding", "gzip"),
 		HaveHeader("Content-Type", "text/html"),
 	)
-	fmt.Println(t.ErrorCalls[0])
-	fmt.Println(t.ErrorCalls[1])
-	//Output: expected the response to have header "Content-Encoding" of "gzip", but it was ""
-	// expected the response to have header "Content-Type" of "text/html", but it was "text/xml"
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected the response to have header "Content-Encoding" of "gzip", but it was "" expected the response to have header "Content-Type" of "text/html", but it was "text/xml"]
 }
 
 func ExampleHaveStatus() {
@@ -109,8 +107,8 @@ func ExampleHaveStatus() {
 	res.WriteHeader(http.StatusTeapot)
 
 	Expect(t, res.Result()).To(HaveStatus(http.StatusTeapot))
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleHaveStatus_fail() {
@@ -119,8 +117,8 @@ func ExampleHaveStatus_fail() {
 	res.WriteHeader(http.StatusTeapot)
 
 	Expect(t, res.Result()).To(HaveStatus(http.StatusNotFound))
-	fmt.Println(t.LastError())
-	//Output: expected the response to have status of 404, but it was 418
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected the response to have status of 404, but it was 418]
 }
 
 func ExampleHaveHeader_fail() {
@@ -129,8 +127,8 @@ func ExampleHaveHeader_fail() {
 	res.Header().Add("Content-Type", "text/xml")
 
 	Expect(t, res.Result()).To(HaveHeader("Content-Type", "text/html"))
-	fmt.Println(t.LastError())
-	//Output: expected the response to have header "Content-Type" of "text/html", but it was "text/xml"
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected the response to have header "Content-Type" of "text/html", but it was "text/xml"]
 }
 
 func TestHTTPTestMatchers(t *testing.T) {

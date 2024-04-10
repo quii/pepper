@@ -7,12 +7,12 @@ type SpyTB struct {
 	ErrorCalls []string
 }
 
-func (s *SpyTB) LastError() string {
+// Result will print the test result
+func (s *SpyTB) Result() string {
 	if len(s.ErrorCalls) == 0 {
-		return ""
+		return "Test passed"
 	}
-
-	return s.ErrorCalls[len(s.ErrorCalls)-1]
+	return fmt.Sprintf("Test failed: %v", s.ErrorCalls)
 }
 
 func (s *SpyTB) String() string {

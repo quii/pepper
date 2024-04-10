@@ -12,8 +12,8 @@ import (
 func ExampleInspector_To() {
 	t := &SpyTB{}
 	Expect(t, "Pepper").To(EqualTo("Stanley"))
-	fmt.Println(t.LastError())
-	//Output: expected "Pepper" to be equal to "Stanley", but it was "Pepper"
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected "Pepper" to be equal to "Stanley", but it was "Pepper"]
 }
 
 func ExampleMatcher_Or() {
@@ -21,8 +21,8 @@ func ExampleMatcher_Or() {
 	tshirt := TShirt{Colour: "yellow"}
 
 	Expect(t, tshirt).To(HaveColour("blue").Or(HaveColour("red")))
-	fmt.Println(t.LastError())
-	//Output: expected the t-shirt to have colour "blue" or have colour "red", but it was "yellow"
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected the t-shirt to have colour "blue" or have colour "red", but it was "yellow"]
 }
 
 func ExampleNot() {
@@ -31,8 +31,8 @@ func ExampleNot() {
 	tshirt := TShirt{Colour: "yellow"}
 
 	Expect(t, tshirt).To(Not(HaveColour("yellow")))
-	fmt.Println(t.LastError())
-	//Output: expected the t-shirt to not have colour "yellow"
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected the t-shirt to not have colour "yellow"]
 }
 
 func ExampleMatcher_And() {
@@ -45,8 +45,8 @@ func ExampleMatcher_And() {
 	Expect(t, player).To(HaveScore(
 		GreaterThan(5).And(LessThan(10)),
 	))
-	fmt.Println(t.LastError())
-	//Output: expected Player Chris to score be greater than 5 and be less than 10, but it was 11
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected Player Chris to score be greater than 5 and be less than 10, but it was 11]
 }
 
 func ExampleExpectNoError() {
@@ -55,8 +55,8 @@ func ExampleExpectNoError() {
 	err := errors.New("oh no")
 
 	ExpectNoError(t, err)
-	fmt.Println(t.LastError())
-	//Output: unexpected error: oh no
+	fmt.Println(t.Result())
+	//Output: Test failed: [unexpected error: oh no]
 }
 
 func ExampleExpectError() {
@@ -65,8 +65,8 @@ func ExampleExpectError() {
 	err := errors.New("oh no")
 
 	ExpectError(t, err)
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleExpectErrorOfType() {
@@ -76,8 +76,8 @@ func ExampleExpectErrorOfType() {
 	wrappedErr := fmt.Errorf("oh no: %w", unauthorised)
 
 	ExpectErrorOfType(t, wrappedErr, unauthorised)
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleExpectErrorOfType_failing() {
@@ -87,8 +87,8 @@ func ExampleExpectErrorOfType_failing() {
 	wrappedErr := fmt.Errorf("oh no: %w", unauthorised)
 
 	ExpectErrorOfType(t, wrappedErr, errors.New("not found"))
-	fmt.Println(t.LastError())
-	//Output: expected error of type *errors.errorString, but got "oh no: unauthorised"
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected error of type *errors.errorString, but got "oh no: unauthorised"]
 }
 
 func TestMatching(t *testing.T) {

@@ -20,8 +20,8 @@ func ExampleContainingByte() {
 	Expect[io.Reader](t, buf).To(HaveData(
 		ContainingByte([]byte("hello")).And(ContainingByte([]byte("world"))),
 	))
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleContainingByte_fail() {
@@ -34,8 +34,8 @@ func ExampleContainingByte_fail() {
 	Expect[io.Reader](t, buf).To(HaveData(
 		ContainingByte([]byte("goodbye")),
 	))
-	fmt.Println(t.LastError())
-	//Output: expected the reader to contain "goodbye", but it didn't have "goodbye"
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected the reader to contain "goodbye", but it didn't have "goodbye"]
 }
 
 func ExampleContainingString() {
@@ -48,8 +48,8 @@ func ExampleContainingString() {
 	Expect[io.Reader](t, buf).To(HaveData(
 		ContainingString("world"),
 	))
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleContainingString_fail() {
@@ -62,8 +62,8 @@ func ExampleContainingString_fail() {
 	Expect[io.Reader](t, buf).To(HaveData(
 		ContainingString("goodbye"),
 	))
-	fmt.Println(t.LastError())
-	//Output: expected the reader to contain "goodbye", but it was "helloworld"
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected the reader to contain "goodbye", but it was "helloworld"]
 }
 
 func ExampleHaveString() {
@@ -73,8 +73,8 @@ func ExampleHaveString() {
 	buf.WriteString("hello")
 	buf.WriteString("world")
 	Expect[io.Reader](t, buf).To(HaveString(EqualTo("helloworld")))
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleHaveString_fail() {
@@ -83,8 +83,8 @@ func ExampleHaveString_fail() {
 	buf.WriteString("hello")
 	buf.WriteString("world")
 	Expect[io.Reader](t, buf).To(HaveString(EqualTo("Poo")))
-	fmt.Println(t.LastError())
-	//Output: expected "helloworld" to be equal to "Poo", but it was "helloworld"
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected "helloworld" to be equal to "Poo", but it was "helloworld"]
 }
 
 func TestIOMatchers(t *testing.T) {

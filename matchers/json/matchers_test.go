@@ -30,8 +30,8 @@ func ExampleParse() {
 	someJSON := bytes.NewBuffer([]byte(`{"name": "John", "age": 42}`))
 
 	Expect[io.Reader](t, someJSON).To(Parse[Person](HasName("John")))
-	fmt.Println(t.LastError())
-	//Output:
+	fmt.Println(t.Result())
+	//Output: Test passed
 }
 
 func ExampleParse_fail() {
@@ -48,6 +48,6 @@ func ExampleParse_fail() {
 		Name: "Pepper",
 		Age:  14,
 	})))
-	fmt.Println(t.LastError())
-	//Output: expected JSON to be parseable into json.Person, but it could not be parsed: invalid character 'i' looking for beginning of value
+	fmt.Println(t.Result())
+	//Output: Test failed: [expected JSON to be parseable into json.Person, but it could not be parsed: invalid character 'i' looking for beginning of value]
 }
