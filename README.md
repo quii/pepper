@@ -255,7 +255,7 @@ import (
 )
 ```
 
-This allows you to write `Expert(t, "Pepper").To(Equal("Pepper"))` _rather than_, `pepper.Expect(t, "Pepper").To(comparable.Equal("Pepper"))`. Of course, as a consumer of Pepper, _you can choose which style you prefer_. 
+This allows you to write `Expect(t, "Pepper").To(Equal("Pepper"))` _rather than_, `pepper.Expect(t, "Pepper").To(comparable.Equal("Pepper"))`. Of course, as a consumer of Pepper, _you can choose which style you prefer_. 
 
 Dot imports have a number of documented downsides, perhaps most importantly, they are [not part of the Go 1 backward compatibility guarantee](https://go.dev/doc/go1compat)
 
