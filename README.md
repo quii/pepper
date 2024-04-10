@@ -20,7 +20,7 @@ Out of the box, Pepper can work just like other test libraries in Go like [is](h
 Expect(t, "Pepper").To(Equal("Pepper"))
 ```
 
-And Pepper has lots of built-in **matchers**, which you pass in to `To`, for common testing operations such as examining `comparable`, `string`, `io` and `*http.Response`.
+Pepper has lots of built-in **matchers**, which you pass in to `To`, for common testing operations such as examining `comparable`, `string`, `io` and `*http.Response`.
 
 What is a `Matcher[T]` ? It's a function that takes a `T`, and returns a `MatchResult`
 
@@ -55,7 +55,7 @@ func HaveAllCaps(in string) matching.MatchResult {
 Expect(t, "HELLO").To(HaveAllCaps)
 ```
 
-Quite nice, but still, not all that different from libraries you already use. Pepper starts to come into its own when you start taking advantage of _composing matchers_.
+Quite nice, but not all that different from libraries you already use. Pepper starts to come into its own when you start taking advantage of _composing matchers_.
 
 ### Composing matchers
 
@@ -135,7 +135,7 @@ func TestTodos(t *testing.T) {
 
 Note how we can compose built-in matchers like `BeOK`, `HaveJSONHeader` and `Not`, with the custom-built matchers to easily write very expressive tests that fail with very clear error messages. Pepper makes it **really easy** to check JSON responses of your HTTP handlers.
 
-Also note, due to the compositional nature of `Matcher[T]`, we can re-use our `Matcher[Todo]` for tests at different abstraction levels; these matchers are not coupled to HTTP, we _composed_ the matchers for this context. For instance, if you have a `TodoRepository`, you could use _these same matchers_ in the tests for that too. 
+Due to the compositional nature of `Matcher[T]`, we can re-use our `Matcher[Todo]` for tests at different abstraction levels; these matchers are not coupled to HTTP, we _composed_ the matchers for this context. For instance, if you have a `TodoRepository`, or a `TodoService`, you can use _these same matchers_ in the tests for them too. 
 
 ### Test failure readability
 
@@ -334,7 +334,7 @@ _Tip_: When designing your matcher, consider changing the argument(s) from `T` t
 
 Pepper makes testing matchers easy because you inject in the testing framework into `Expect`, so we can _spy_ on it. 
 
-I have found writing [testable examples](https://go.dev/blog/examples) though to be a satisfying way of both documenting and testing matchers.
+I have found writing [testable examples](https://go.dev/blog/examples) to be a satisfying way of both documenting and testing matchers.
 
 ```go
 func ExampleContainItem() {
