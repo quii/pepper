@@ -23,7 +23,7 @@ func ExampleHaveFileCalled_failContentMismatch() {
 	Expect[fs.FS](t, stubFS).To(HaveFileCalled("someFile.txt", HaveString(Containing("Pluto"))))
 
 	fmt.Println(t.Result())
-	//Output: Test failed: [expected file called someFile.txt to contain "Pluto", but the file existed, however contents did not match]
+	//Output: Test failed: [expected file called "someFile.txt" to contain "Pluto", but while the file existed, the contents did not match]
 }
 
 func ExampleHaveFileCalled_failFileNotFound() {
@@ -150,7 +150,7 @@ func TestFSMatching(t *testing.T) {
 				t,
 				stubFS,
 				HaveFileCalled("someFile.txt", HaveString(Containing("goodbye"))),
-				`expected file called someFile.txt to contain "goodbye", but the file existed, however contents did not match`,
+				`expected file called "someFile.txt" to contain "goodbye", but while the file existed, the contents did not match`,
 			)
 
 			t.Run("failing filesystem", func(t *testing.T) {
@@ -159,7 +159,7 @@ func TestFSMatching(t *testing.T) {
 					t,
 					failingFS,
 					HaveFileCalled("anotherFile.txt", HaveString(EqualTo("BLAH"))),
-					"expected file called anotherFile.txt to have data in io.Reader, but it could not be read",
+					`expected file called "anotherFile.txt" to have data in io.Reader, but it could not be read`,
 				)
 			})
 		})

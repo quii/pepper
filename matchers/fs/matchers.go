@@ -28,10 +28,10 @@ func HaveFileCalled(name string, contentMatcher ...pepper.Matcher[io.Reader]) pe
 		if len(contentMatcher) > 0 {
 			for _, matcher := range contentMatcher {
 				result := matcher(file)
-				result.SubjectName = "file called " + name
+				result.SubjectName = fmt.Sprintf("file called %q", name)
 				if !result.Matches {
 					if result.But == "" {
-						result.But = "the file existed, however contents did not match"
+						result.But = "while the file existed, the contents did not match"
 					}
 					return result
 				}
