@@ -73,7 +73,7 @@ func ExampleEveryItem() {
 	t := &SpyTB{}
 
 	anArray := []string{"hello", "world"}
-	Expect(t, anArray).To(EveryItem(HaveSubstring("o")))
+	Expect(t, anArray).To(EveryItem(Containing("o")))
 
 	fmt.Println(t.Result())
 	//Output: Test passed
@@ -83,7 +83,7 @@ func ExampleEveryItem_fail() {
 	t := &SpyTB{}
 
 	anArray := []string{"hello", "world"}
-	Expect(t, anArray).To(EveryItem(HaveSubstring("h")))
+	Expect(t, anArray).To(EveryItem(Containing("h")))
 
 	fmt.Println(t.Result())
 	//Output: Test failed: [expected [hello world] to have every item contain "h"]

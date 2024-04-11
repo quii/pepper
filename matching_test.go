@@ -96,7 +96,7 @@ func TestMatching(t *testing.T) {
 		Expect(t, "hello").To(
 			HaveLength(EqualTo(5)),
 			EqualTo("hello"),
-			HaveSubstring("ell"),
+			Containing("ell"),
 			Doesnt(HaveAllCaps),
 		)
 	})

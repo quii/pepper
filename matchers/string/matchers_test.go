@@ -44,19 +44,19 @@ func ExampleHaveLength_fail() {
 	//Output: Test failed: [expected hello to have length be equal to 4, but it was 5]
 }
 
-func ExampleHaveSubstring() {
+func ExampleContaining() {
 	t := &SpyTB{}
 
-	Expect(t, "hello").To(HaveSubstring("ell"))
+	Expect(t, "hello").To(Containing("ell"))
 
 	fmt.Println(t.Result())
 	//Output: Test passed
 }
 
-func ExampleHaveSubstring_fail() {
+func ExampleContaining_fail() {
 	t := &SpyTB{}
 
-	Expect(t, "hello").To(HaveSubstring("goodbye"))
+	Expect(t, "hello").To(Containing("goodbye"))
 
 	fmt.Println(t.Result())
 	//Output: Test failed: [expected hello to contain "goodbye"]
@@ -68,7 +68,7 @@ func Example() {
 	Expect(t, "hello").To(
 		HaveLength(EqualTo(5)),
 		EqualTo("hello"),
-		HaveSubstring("ell"),
+		Containing("ell"),
 		Doesnt(HaveAllCaps),
 	)
 

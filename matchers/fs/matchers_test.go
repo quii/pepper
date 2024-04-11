@@ -3,6 +3,8 @@ package fs
 import (
 	"fmt"
 	. "github.com/quii/pepper"
+	. "github.com/quii/pepper/matchers/comparable"
+	. "github.com/quii/pepper/matchers/io"
 	"github.com/quii/pepper/matchers/spytb"
 	. "github.com/quii/pepper/matchers/string"
 	"io/fs"
@@ -18,7 +20,7 @@ func ExampleHaveFileCalled_fail() {
 		},
 	}
 
-	Expect[fs.FS](t, stubFS).To(HaveFileCalled("someFile.txt", HaveSubstring("Pluto")))
+	Expect[fs.FS](t, stubFS).To(HaveFileCalled("someFile.txt", HaveString(Containing("Pluto"))))
 
 	fmt.Println(t.Result())
 	//Output: Test failed: [expected file called someFile.txt to contain "Pluto"]
@@ -128,14 +130,14 @@ func TestFSMatching(t *testing.T) {
 
 	t.Run("FileContains with contents", func(t *testing.T) {
 		t.Run("passing", func(t *testing.T) {
-			Expect[fs.FS](t, stubFS).To(HaveFileCalled("someFile.txt", HaveSubstring("world")))
+			Expect[fs.FS](t, stubFS).To(HaveFileCalled("someFile.txt", HaveString(Containing("world"))))
 		})
 
 		t.Run("failing", func(t *testing.T) {
 			spytb.VerifyFailingMatcher[fs.FS](
 				t,
 				stubFS,
-				HaveFileCalled("someFile.txt", HaveSubstring("goodbye")),
+				HaveFileCalled("someFile.txt", HaveString(Containing("goodbye"))),
 				`expected file called someFile.txt to contain "goodbye"`,
 			)
 
@@ -144,8 +146,8 @@ func TestFSMatching(t *testing.T) {
 				spytb.VerifyFailingMatcher[fs.FS](
 					t,
 					failingFS,
-					HaveFileCalled("anotherFile.txt", HaveSubstring("BLAH")),
-					"expected file system to have file called anotherFile.txt, but it could not be read",
+					HaveFileCalled("anotherFile.txt", HaveString(EqualTo("BLAH"))),
+					"expected file called anotherFile.txt to have data in io.Reader, but it could not be read",
 				)
 			})
 		})

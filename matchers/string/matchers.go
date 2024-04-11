@@ -24,8 +24,8 @@ func HaveAllCaps(in string) pepper.MatchResult {
 	}
 }
 
-// HaveSubstring will check if a string contains a given substring.
-func HaveSubstring(substring string) pepper.Matcher[string] {
+// Containing will check if a string contains a given substring.
+func Containing(substring string) pepper.Matcher[string] {
 	return func(in string) pepper.MatchResult {
 		return pepper.MatchResult{
 			Description: fmt.Sprintf("contain %q", substring),
