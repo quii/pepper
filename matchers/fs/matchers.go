@@ -30,6 +30,9 @@ func HaveFileCalled(name string, contentMatcher ...pepper.Matcher[io.Reader]) pe
 				result := matcher(file)
 				result.SubjectName = "file called " + name
 				if !result.Matches {
+					if result.But == "" {
+						result.But = "the file existed, however contents did not match"
+					}
 					return result
 				}
 			}
