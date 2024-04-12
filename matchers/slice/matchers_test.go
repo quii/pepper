@@ -26,7 +26,7 @@ func ExampleShallowEquals_fail() {
 	Expect(t, anArray).To(ShallowEquals([]string{"goodbye", "world"}))
 
 	fmt.Println(t.Result())
-	//Output: Test failed: [expected [hello world] to be equal to [goodbye world]]
+	//Output: Test failed: [expected [hello world] to be equal to [goodbye world], but the slice is not equal]
 }
 
 func ExampleContainItem() {

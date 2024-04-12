@@ -60,9 +60,15 @@ func EveryItem[T any](m pepper.Matcher[T]) pepper.Matcher[[]T] {
 // ShallowEquals checks if two slices are equal, only works with slices of comparable types.
 func ShallowEquals[T comparable](other []T) pepper.Matcher[[]T] {
 	return func(ts []T) pepper.MatchResult {
+		equal := slices.Equal(ts, other)
+		but := ""
+		if !equal {
+			but = "the slice is not equal"
+		}
 		return pepper.MatchResult{
-			Matches:     slices.Equal(ts, other),
+			Matches:     equal,
 			Description: fmt.Sprintf("be equal to %v", other),
+			But:         but,
 		}
 	}
 }
